@@ -5,7 +5,7 @@
   "description": "File manager for Cozy v3",
   "category": "cozy",
   "source": "https://github.com/cozy/cozy-drive.git@build",
-  "editor": "Cozy",
+  "editor": "cozy",
   "developer": {
     "name": "Cozy",
     "url": "https://cozy.io"
@@ -45,7 +45,7 @@
       "href": "/services"
     }
   ],
-  "version": "3.0.0",
+  "version": "3.0.1",
   "licence": "AGPL-3.0",
   "permissions": {
     "files": {

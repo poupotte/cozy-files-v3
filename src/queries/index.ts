@@ -101,6 +101,33 @@ export const buildRecentQuery: QueryBuilder = () => ({
   }
 })
 
+/**
+ * Most recently updated files whose class belongs to `classes`, used by the
+ * file type pages (/type/:fileType) the Home entrypoints open.
+ */
+export const buildRecentByClassQuery: QueryBuilder<string[]> = classes => ({
+  definition: () =>
+    Q('io.cozy.files')
+      .where({
+        updated_at: {
+          $gt: null
+        }
+      })
+      .partialIndex({
+        type: 'file',
+        trashed: false,
+        class: { $in: classes },
+        dir_id: { $nin: [TRASH_DIR_ID] }
+      })
+      .indexFields(['updated_at'])
+      .sortBy([{ updated_at: 'desc' }])
+      .limitBy(50),
+  options: {
+    as: `recent-by-class-${classes.join('-')}`,
+    fetchPolicy: defaultFetchPolicy
+  }
+})
+
 export const buildParentsByIdsQuery: QueryBuilder<string[]> = ids => ({
   definition: () => Q('io.cozy.files').getByIds(ids),
   options: {

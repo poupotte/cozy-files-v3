@@ -13,6 +13,9 @@ import { DriveFolderView } from '../views/Drive/DriveFolderView'
 import FilesViewerDrive from '../views/Drive/FilesViewerDrive'
 import { getExcalidrawRoutes } from '../views/Excalidraw/routes'
 import { FilePickerDemoView } from '../views/FilePickerDemo/FilePickerDemoView'
+import FileTypeView from '../views/FileType'
+import FilesViewerFileType from '../views/FileType/FilesViewerFileType'
+import { getFileTypePage } from '../views/FileType/helpers'
 import OnlyOfficePaywallView from '../views/OnlyOffice/OnlyOfficePaywallView'
 import { getOnlyOfficeRoutes } from '../views/OnlyOffice/routes'
 import { getPdfRoutes } from '../views/Pdf/routes'
@@ -78,6 +81,20 @@ const filteredBarRoutes = BarRoutes.filter(
 const FilesRedirect = () => {
   const { folderId } = useParams()
   return <Navigate to={`/folder/${folderId}`} replace={true} />
+}
+
+// File type pages are opened from the Home entrypoints: no Drive navigation,
+// and the bar shows the entrypoint instead of Drive.
+const FileTypeLayout = () => {
+  const { fileType } = useParams()
+  const page = getFileTypePage(fileType)
+  return (
+    <Layout
+      withSidebar={false}
+      appIcon={page?.appIcon}
+      appTextIcon={page?.appTextIcon}
+    />
+  )
 }
 
 const OutletWrapper = ({ Component }) => (
@@ -201,6 +218,25 @@ const AppRoutes = ({ sharedDrivesEnabled }) => (
 
     <Route element={<AssistantLayout />}>
       <Route path={ASSISTANT_ROUTE_PATH} element={<AssistantView />} />
+    </Route>
+
+    <Route element={<FileTypeLayout />}>
+      <Route path="type/:fileType" element={<FileTypeView />}>
+        <Route
+          path="file/:fileId"
+          element={<OutletWrapper Component={FilesViewerFileType} />}
+        >
+          <Route path="v/revision" element={<FileHistory />} />
+          <Route path="v/share" element={<ShareFileView />} />
+          <Route path="v/move" element={<MoveFilesView isOpenInViewer />} />
+          <Route path="v/duplicate" element={<FolderDuplicateView />} />
+        </Route>
+        <Route path="file/:fileId/revision" element={<FileHistory />} />
+        <Route path="file/:fileId/share" element={<ShareFileView />} />
+        <Route path="file/:fileId/qualify" element={<QualifyFileView />} />
+        <Route path="share" element={<ShareDisplayedFolderView />} />
+        <Route path="move" element={<MoveFilesView />} />
+      </Route>
     </Route>
 
     <Route element={<Layout />}>

@@ -59,7 +59,7 @@ const handleContextMenu = ev => {
   ev.preventDefault()
 }
 
-const LayoutContent = () => {
+const LayoutContent = ({ withSidebar, appIcon, appTextIcon }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { isMobile, isDesktop } = useBreakpoints()
@@ -91,81 +91,83 @@ const LayoutContent = () => {
   }
 
   return (
-    <LayoutUI onContextMenu={handleContextMenu}>
+    <LayoutUI onContextMenu={handleContextMenu} monoColumn={!withSidebar}>
       <NewItemHighlightProvider>
         <BarComponent
           searchOptions={{ enabled: !isMobile }}
           disableInternalStore
-          appIcon={Drive}
-          appTextIcon={DriveText}
+          appIcon={appIcon ?? Drive}
+          appTextIcon={appTextIcon ?? DriveText}
         />
         <FlagSwitcher />
-        <Sidebar className="u-flex-justify-between">
-          <div>
-            {isDesktop && isNoFolderSection ? (
-              <div className="u-mh-1 u-mt-half">
-                <AddMenuProvider
-                  canCreateFolder={true}
-                  canUpload={true}
-                  disabled={false}
-                  displayedFolder={displayedFolder}
-                  isSelectionBarVisible={false}
-                  componentsProps={{ AddMenu: { isUploadDisabled: true } }}
-                  onAddFolder={() => goToRoot({ create: true })}
-                >
-                  <AddButton className="u-w-100 u-bdrs-6 u-mt-half u-mb-half u-fz-small" />
-                </AddMenuProvider>
-                <UploadButton
-                  folderId={null}
-                  onUploadStart={() => goToRoot()}
-                  componentsProps={{
-                    button: {
-                      className: 'u-w-100 u-bdrs-6 u-fz-small'
-                    }
-                  }}
-                  label={t('upload.label')}
-                  displayedFolder={displayedFolder}
-                />
-              </div>
-            ) : isDesktop ? (
-              <div className="u-mh-1 u-mt-half">
-                <AddMenuProvider
-                  canCreateFolder={true}
-                  canUpload={true}
-                  disabled={isReadOnly}
-                  displayedFolder={displayedFolder}
-                  isSelectionBarVisible={false}
-                  componentsProps={{ AddMenu: { isUploadDisabled: true } }}
-                >
-                  <AddButton className="u-w-100 u-bdrs-6 u-mt-half u-mb-half u-fz-small" />
-                </AddMenuProvider>
-                <UploadButton
-                  disabled={isReadOnly}
-                  folderId={rawFolderId}
-                  driveId={driveId}
-                  componentsProps={{
-                    button: {
-                      className: 'u-w-100 u-bdrs-6 u-fz-small',
-                      disabled: isReadOnly
-                    }
-                  }}
-                  label={t('upload.label')}
-                  displayedFolder={displayedFolder}
-                />
-              </div>
-            ) : null}
-            <Nav />
-          </div>
-          {isDesktop && (
+        {withSidebar && (
+          <Sidebar className="u-flex-justify-between">
             <div>
-              {flag('drive.file-picker-demo.enabled') && <FilePickerButton />}
-              <div className="u-p-1-half">
-                <Storage />
-              </div>
-              <ButtonClient />
+              {isDesktop && isNoFolderSection ? (
+                <div className="u-mh-1 u-mt-half">
+                  <AddMenuProvider
+                    canCreateFolder={true}
+                    canUpload={true}
+                    disabled={false}
+                    displayedFolder={displayedFolder}
+                    isSelectionBarVisible={false}
+                    componentsProps={{ AddMenu: { isUploadDisabled: true } }}
+                    onAddFolder={() => goToRoot({ create: true })}
+                  >
+                    <AddButton className="u-w-100 u-bdrs-6 u-mt-half u-mb-half u-fz-small" />
+                  </AddMenuProvider>
+                  <UploadButton
+                    folderId={null}
+                    onUploadStart={() => goToRoot()}
+                    componentsProps={{
+                      button: {
+                        className: 'u-w-100 u-bdrs-6 u-fz-small'
+                      }
+                    }}
+                    label={t('upload.label')}
+                    displayedFolder={displayedFolder}
+                  />
+                </div>
+              ) : isDesktop ? (
+                <div className="u-mh-1 u-mt-half">
+                  <AddMenuProvider
+                    canCreateFolder={true}
+                    canUpload={true}
+                    disabled={isReadOnly}
+                    displayedFolder={displayedFolder}
+                    isSelectionBarVisible={false}
+                    componentsProps={{ AddMenu: { isUploadDisabled: true } }}
+                  >
+                    <AddButton className="u-w-100 u-bdrs-6 u-mt-half u-mb-half u-fz-small" />
+                  </AddMenuProvider>
+                  <UploadButton
+                    disabled={isReadOnly}
+                    folderId={rawFolderId}
+                    driveId={driveId}
+                    componentsProps={{
+                      button: {
+                        className: 'u-w-100 u-bdrs-6 u-fz-small',
+                        disabled: isReadOnly
+                      }
+                    }}
+                    label={t('upload.label')}
+                    displayedFolder={displayedFolder}
+                  />
+                </div>
+              ) : null}
+              <Nav />
             </div>
-          )}
-        </Sidebar>
+            {isDesktop && (
+              <div>
+                {flag('drive.file-picker-demo.enabled') && <FilePickerButton />}
+                <div className="u-p-1-half">
+                  <Storage />
+                </div>
+                <ButtonClient />
+              </div>
+            )}
+          </Sidebar>
+        )}
         <UploadQueue />
         <FilesRealTimeQueries />
         {flag('settings.migration.enabled') && (
@@ -180,10 +182,16 @@ const LayoutContent = () => {
   )
 }
 
-const Layout = () => {
+// withSidebar=false and the bar icons are for standalone pages opened from
+// outside Drive (e.g. the Home entrypoints), not reachable from the navigation.
+const Layout = ({ withSidebar = true, appIcon, appTextIcon }) => {
   return (
     <NavProvider>
-      <LayoutContent />
+      <LayoutContent
+        withSidebar={withSidebar}
+        appIcon={appIcon}
+        appTextIcon={appTextIcon}
+      />
     </NavProvider>
   )
 }

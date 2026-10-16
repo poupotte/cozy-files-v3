@@ -142,7 +142,13 @@ const useFileLink = (
           : getFolderPath(file.dir_id) + to.pathname
     }
   }
-  if (pathname.startsWith('/sharings/')) {
+  // Keep the list filters (f.* search params) when opening a file from a
+  // filterable view, so closing the viewer restores the same list.
+  if (
+    pathname.startsWith('/sharings/') ||
+    (pathname.startsWith('/recent') && to.pathname.startsWith('/recent/')) ||
+    (pathname.startsWith('/type/') && to.pathname.startsWith('/type/'))
+  ) {
     to = { ...to, search }
   }
 

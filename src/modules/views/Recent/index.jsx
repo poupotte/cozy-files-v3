@@ -11,10 +11,13 @@ import { makeActions } from 'cozy-ui/transpiled/react/ActionsMenu/Actions'
 import { Content } from 'cozy-ui/transpiled/react/Layout'
 import LinearProgress from 'cozy-ui/transpiled/react/LinearProgress'
 
+import { useFilteredRecents } from './useFilteredRecents'
+import { useRecentFilters } from './useRecentFilters'
 import FolderView from '../Folder/FolderView'
 import FolderViewBody from '../Folder/FolderViewBody'
 import FolderViewHeader from '../Folder/FolderViewHeader'
 import FolderViewBodyVz from '../Folder/virtualized/FolderViewBody'
+import { SharingsFilters } from '../Sharings/SharingsFilters'
 
 import useHead from '@/components/useHead'
 import { RECENT_FOLDER_ID } from '@/constants/config'
@@ -50,12 +53,19 @@ export const RecentView = () => {
   const [sortOrder, setSortOrder, isSettingsLoaded] =
     useFolderSort(RECENT_FOLDER_ID)
 
-  const recentsResult = useRecentFiles()
+  const unfilteredRecentsResult = useRecentFiles()
+  const recentFilters = useRecentFilters()
+  const { contactFilterOptions, filteredResult: recentsResult } =
+    useFilteredRecents({
+      result: unfilteredRecentsResult,
+      filters: recentFilters.filters
+    })
 
   // Shared-drive and federated files arrive from the dataproxy seconds after
   // the local files; surface that background fetch once a list is on screen.
   const isFetchingMore =
-    recentsResult?.fetchStatus === 'loading' && recentsResult?.data?.length > 0
+    unfilteredRecentsResult?.fetchStatus === 'loading' &&
+    unfilteredRecentsResult?.data?.length > 0
 
   useKeyboardShortcuts({
     client: base.client,
@@ -109,6 +119,13 @@ export const RecentView = () => {
           <Breadcrumb path={[{ name: base.t('breadcrumb.title_recent') }]} />
           <Toolbar canUpload={false} canCreateFolder={false} />
         </FolderViewHeader>
+        {!base.isMobile && (
+          <SharingsFilters
+            {...recentFilters}
+            contactFilterLoading={!allLoaded}
+            contactFilterOptions={contactFilterOptions}
+          />
+        )}
         {isFetchingMore && <LinearProgress />}
         {flag('drive.virtualization.enabled') && !base.isMobile ? (
           <FolderViewBodyVz

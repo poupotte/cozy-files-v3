@@ -870,5 +870,25 @@
       "CONSTRAINT_VIOLATION": "Les éléments sélectionnés ne respectent pas les contraintes de cette action.",
       "DOCUMENTS_FAILED": "Impossible de récupérer les documents sélectionnés et leurs chemins."
     }
+  },
+  "FileTypeView": {
+    "title": {
+      "text": "Derniers documents",
+      "sheet": "Dernières feuilles de calcul",
+      "slide": "Dernières présentations"
+    },
+    "empty": {
+      "welcome": "Bienvenue sur %{app}",
+      "after_created": {
+        "text": "Une fois votre document créé, il vous est possible de le retrouver dans ",
+        "sheet": "Une fois votre feuille de calcul créée, il vous est possible de la retrouver dans ",
+        "slide": "Une fois votre présentation créée, il vous est possible de la retrouver dans "
+      },
+      "create": {
+        "text": "Créer un document",
+        "sheet": "Créer une feuille de calcul",
+        "slide": "Créer une présentation"
+      }
+    }
   }
 }

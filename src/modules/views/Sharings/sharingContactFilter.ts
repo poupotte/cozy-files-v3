@@ -90,14 +90,28 @@ export function getSharingsContactFilterData(
   tab: SharingsTab,
   getRecipients: (documentId: string) => SharingRecipient[]
 ): SharingsContactFilterData {
+  return getContactFilterDataByEntryTab(entries, () => tab, getRecipients)
+}
+
+/**
+ * Same as getSharingsContactFilterData, for lists that mix entries of several
+ * sharings tabs (e.g. Recent): each entry only exposes the contacts its own
+ * tab would show, so the filter matches what the Sharings view displays.
+ */
+export function getContactFilterDataByEntryTab(
+  entries: readonly IOCozyFile[],
+  getEntryTab: (entry: IOCozyFile) => SharingsTab,
+  getRecipients: (documentId: string) => SharingRecipient[]
+): SharingsContactFilterData {
   const contactValuesByEntryId = new Map<string, readonly string[]>()
   const optionsByValue = new Map<string, SharingsContactFilterOptionData>()
   const uniqueOptions: SharingsContactFilterOptionData[] = []
-  const supportsContacts =
-    tab === SHARING_TAB_WITH_ME || tab === SHARING_TAB_BY_ME
 
   for (const entry of entries) {
     const entryId = entry._id
+    const tab = getEntryTab(entry)
+    const supportsContacts =
+      tab === SHARING_TAB_WITH_ME || tab === SHARING_TAB_BY_ME
 
     if (!supportsContacts) {
       contactValuesByEntryId.set(entryId, [])

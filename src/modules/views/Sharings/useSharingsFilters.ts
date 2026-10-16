@@ -44,9 +44,14 @@ function getFilterParam(filterName: string): string {
   return `${SHARINGS_FILTER_PREFIX}${filterName}`
 }
 
-export function useSharingsFilters(tab: SharingsTab): UseSharingsFiltersResult {
+/**
+ * Stores the given filters in the `f.<name>` search params of the current
+ * location, so they survive reloads and file viewer round-trips.
+ */
+export function useUrlFilters(
+  supportedFilters: readonly string[]
+): UseSharingsFiltersResult {
   const [searchParams, setSearchParams] = useSearchParams()
-  const supportedFilters = getSupportedFilters(tab)
   const filters: SharingsFilterValues = Object.fromEntries(
     supportedFilters.map(filterName => [
       filterName,
@@ -82,4 +87,8 @@ export function useSharingsFilters(tab: SharingsTab): UseSharingsFiltersResult {
     setFilter,
     supportedFilters
   }
+}
+
+export function useSharingsFilters(tab: SharingsTab): UseSharingsFiltersResult {
+  return useUrlFilters(getSupportedFilters(tab))
 }

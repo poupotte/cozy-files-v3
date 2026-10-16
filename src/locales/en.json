@@ -870,5 +870,25 @@
       "CONSTRAINT_VIOLATION": "The selected items do not meet the requirements for this action.",
       "DOCUMENTS_FAILED": "Could not retrieve the selected documents and their paths."
     }
+  },
+  "FileTypeView": {
+    "title": {
+      "text": "Latest documents",
+      "sheet": "Latest spreadsheets",
+      "slide": "Latest presentations"
+    },
+    "empty": {
+      "welcome": "Welcome on %{app}",
+      "after_created": {
+        "text": "Once your document is created, you can find it in your ",
+        "sheet": "Once your spreadsheet is created, you can find it in your ",
+        "slide": "Once your presentation is created, you can find it in your "
+      },
+      "create": {
+        "text": "Create a document",
+        "sheet": "Create a spreadsheet",
+        "slide": "Create a presentation"
+      }
+    }
   }
 }

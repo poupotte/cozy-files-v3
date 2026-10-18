@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useParams, useSearchParams } from 'react-router-dom'
 
 import Dialog, { DialogContent } from 'cozy-ui/transpiled/react/Dialog'
 import Spinner from 'cozy-ui/transpiled/react/Spinner'
@@ -10,6 +10,10 @@ import { useCreateFile } from '@/modules/views/Excalidraw/useCreateFile'
 
 const Create = ({ isPublic = false }) => {
   const { folderId, driveId = undefined } = useParams()
+  // Where the creation was asked from, to go back there rather than to the
+  // folder of the new drawing.
+  const [searchParams] = useSearchParams()
+  const redirectLink = searchParams.get('redirectLink')
   const { status, fileId } = useCreateFile(folderId, driveId)
 
   if (status === 'error') {
@@ -19,9 +23,13 @@ const Create = ({ isPublic = false }) => {
   if (status === 'loaded' && fileId) {
     const url = makeExcalidrawFileRoute(fileId, {
       driveId,
-      fromPathname: driveId
-        ? `/shareddrive/${driveId}/${folderId}`
-        : `/folder/${folderId}`,
+      ...(redirectLink
+        ? { fromRedirect: redirectLink }
+        : {
+            fromPathname: driveId
+              ? `/shareddrive/${driveId}/${folderId}`
+              : `/folder/${folderId}`
+          }),
       fromPublicFolder: isPublic
     })
     return <Navigate to={url} replace />

@@ -4,6 +4,7 @@ import { generateWebLink } from 'cozy-client'
  * @typedef {Object} EditorRouteOptions
  * @property {string} [driveId] Id of the shared drive the file belongs to
  * @property {string} [fromPathname] Hash to redirect the user to when he comes back
+ * @property {string} [fromRedirect] To forward an existing redirectLink
  * @property {boolean} [fromPublicFolder] The document is opened from a public folder
  */
 
@@ -18,11 +19,14 @@ import { generateWebLink } from 'cozy-client'
 export const makeEditorFileRoute = (
   slug,
   fileId,
-  { driveId, fromPathname, fromPublicFolder = false } = {}
+  { driveId, fromPathname, fromRedirect, fromPublicFolder = false } = {}
 ) => {
   const params = new URLSearchParams()
   if (fromPathname) {
     params.append('redirectLink', `drive#${fromPathname}`)
+  }
+  if (fromRedirect) {
+    params.append('redirectLink', fromRedirect)
   }
   if (fromPublicFolder) {
     params.append('fromPublicFolder', fromPublicFolder)

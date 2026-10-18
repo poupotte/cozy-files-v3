@@ -1,5 +1,10 @@
 import React from 'react'
-import { useNavigate, useParams, Navigate } from 'react-router-dom'
+import {
+  useNavigate,
+  useParams,
+  useSearchParams,
+  Navigate
+} from 'react-router-dom'
 
 import Dialog, { DialogContent } from 'cozy-ui/transpiled/react/Dialog'
 import Spinner from 'cozy-ui/transpiled/react/Spinner'
@@ -14,6 +19,10 @@ import useCreateFile from '@/modules/views/OnlyOffice/useCreateFile'
 const Create = ({ isPublic = false }) => {
   const navigate = useNavigate()
   const { folderId, fileClass, driveId = undefined } = useParams()
+  // Where the creation was asked from, to go back there rather than to the
+  // folder of the new document.
+  const [searchParams] = useSearchParams()
+  const redirectLink = searchParams.get('redirectLink')
   const { status, fileId } = useCreateFile(folderId, fileClass, driveId)
   const folderPath = `/folder/${folderId}`
 
@@ -36,9 +45,13 @@ const Create = ({ isPublic = false }) => {
   if (status === 'loaded' && fileId) {
     const url = makeOnlyOfficeFileRoute(fileId, {
       fromCreate: true,
-      fromPathname: driveId
-        ? `/shareddrive/${driveId}/${folderId}`
-        : folderPath,
+      ...(redirectLink
+        ? { fromRedirect: redirectLink }
+        : {
+            fromPathname: driveId
+              ? `/shareddrive/${driveId}/${folderId}`
+              : folderPath
+          }),
       fromPublicFolder: isPublic,
       driveId
     })

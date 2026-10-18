@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useClient } from 'cozy-client'
 
@@ -11,10 +11,12 @@ import logger from '@/lib/logger'
 /**
  * Creates a file of the page type in its folder (Doc, Spreadsheet,
  * Presentation or Board), creating that folder first when it does not exist.
+ * The editor then goes back to the page, with its filters, not to the folder.
  */
 export const useCreateFileTypeFile = (fileType, page) => {
   const client = useClient()
   const navigate = useNavigate()
+  const { pathname, search } = useLocation()
   const [isCreating, setIsCreating] = useState(false)
 
   const createFile = useCallback(async () => {
@@ -32,8 +34,11 @@ export const useCreateFileTypeFile = (fileType, page) => {
         setIsCreating(false)
       }
     }
-    navigate(page.createPath(folderId))
-  }, [client, fileType, navigate, page])
+    const redirectLink = `drive#${pathname}${search}`
+    navigate(
+      `${page.createPath(folderId)}?${new URLSearchParams({ redirectLink })}`
+    )
+  }, [client, fileType, navigate, page, pathname, search])
 
   return { createFile, isCreating }
 }

@@ -110,7 +110,7 @@ describe('AddMenuContent', () => {
           options: { isPublic: true, canUpload: false }
         }
       ])('$desc', ({ present, options }) =>
-        expectMenuItem('Excalidraw', present, options)
+        expectMenuItem('Board', present, options)
       )
     })
   })

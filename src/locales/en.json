@@ -57,7 +57,7 @@
     "menu_download_file": "Download this file",
     "menu_create_note": "Note",
     "menu_create_docs": "Docs",
-    "menu_create_excalidraw": "Excalidraw",
+    "menu_create_excalidraw": "Board",
     "menu_create_grist": "Grist",
     "menu_create_shortcut": "Shortcut",
     "share": "Share",
@@ -112,7 +112,7 @@
         "video": "Videos",
         "archive": "Archives",
         "audio": "Audio",
-        "draw": "Draw",
+        "draw": "Boards",
         "shortcut": "Shortcuts"
       }
     }
@@ -599,7 +599,7 @@
     "url_badformat": "Your url is not in the right format"
   },
   "Excalidraw": {
-    "createFileName": "New drawing",
+    "createFileName": "New board",
     "collaboration": {
       "guest": "Guest"
     }
@@ -875,19 +875,22 @@
     "title": {
       "text": "Latest documents",
       "sheet": "Latest spreadsheets",
-      "slide": "Latest presentations"
+      "slide": "Latest presentations",
+      "excalidraw": "Latest boards"
     },
     "empty": {
       "welcome": "Welcome on %{app}",
       "after_created": {
         "text": "Once your document is created, you can find it in your ",
         "sheet": "Once your spreadsheet is created, you can find it in your ",
-        "slide": "Once your presentation is created, you can find it in your "
+        "slide": "Once your presentation is created, you can find it in your ",
+        "excalidraw": "Once your board is created, you can find it in your "
       },
       "create": {
         "text": "Create a document",
         "sheet": "Create a spreadsheet",
-        "slide": "Create a presentation"
+        "slide": "Create a presentation",
+        "excalidraw": "Create a board"
       }
     }
   }

@@ -2,6 +2,8 @@
 // the ones of the Home entrypoints declared in manifest.webapp.
 import React from 'react'
 
+import IconExcalidraw from '@/assets/icons/icon-excalidraw.svg'
+
 function SvgDocApp(props) {
   return (
     <svg viewBox="0 0 32 32" fill="none" {...props}>
@@ -129,3 +131,5 @@ export const PresentationAppText = makeAppText(
   '#FF9500',
   '#DF6310'
 )
+export const BoardApp = IconExcalidraw
+export const BoardAppText = makeAppText('Board', '#6965DB', '#5B57D1')

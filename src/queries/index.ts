@@ -128,6 +128,33 @@ export const buildRecentByClassQuery: QueryBuilder<string[]> = classes => ({
   }
 })
 
+/**
+ * Most recently updated files whose mime type belongs to `mimes`, for the
+ * file type pages of a type with no class of its own, as Excalidraw boards.
+ */
+export const buildRecentByMimeQuery: QueryBuilder<string[]> = mimes => ({
+  definition: () =>
+    Q('io.cozy.files')
+      .where({
+        updated_at: {
+          $gt: null
+        }
+      })
+      .partialIndex({
+        type: 'file',
+        trashed: false,
+        mime: { $in: mimes },
+        dir_id: { $nin: [TRASH_DIR_ID] }
+      })
+      .indexFields(['updated_at'])
+      .sortBy([{ updated_at: 'desc' }])
+      .limitBy(50),
+  options: {
+    as: `recent-by-mime-${mimes.join('-')}`,
+    fetchPolicy: defaultFetchPolicy
+  }
+})
+
 export const buildParentsByIdsQuery: QueryBuilder<string[]> = ids => ({
   definition: () => Q('io.cozy.files').getByIds(ids),
   options: {

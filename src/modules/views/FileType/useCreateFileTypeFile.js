@@ -7,11 +7,10 @@ import { ensureFileTypeFolder } from './fileTypeFolder'
 
 import { ROOT_DIR_ID } from '@/constants/config'
 import logger from '@/lib/logger'
-import { canWriteOfficeDocument } from '@/modules/views/OnlyOffice/helpers'
 
 /**
- * Creates a file of the page type in its folder (Doc, Spreadsheet or
- * Presentation), creating that folder first when it does not exist.
+ * Creates a file of the page type in its folder (Doc, Spreadsheet,
+ * Presentation or Board), creating that folder first when it does not exist.
  */
 export const useCreateFileTypeFile = (fileType, page) => {
   const client = useClient()
@@ -19,10 +18,10 @@ export const useCreateFileTypeFile = (fileType, page) => {
   const [isCreating, setIsCreating] = useState(false)
 
   const createFile = useCallback(async () => {
-    // Without office edition the create route only shows the paywall: do not
-    // create a folder for nothing.
+    // Without edition the create route only shows the paywall: do not create
+    // a folder for nothing.
     let folderId = ROOT_DIR_ID
-    if (canWriteOfficeDocument()) {
+    if (page.canCreate()) {
       setIsCreating(true)
       try {
         const folder = await ensureFileTypeFolder(client, fileType, page)
@@ -33,7 +32,7 @@ export const useCreateFileTypeFile = (fileType, page) => {
         setIsCreating(false)
       }
     }
-    navigate(`/onlyoffice/create/${folderId}/${page.createClass}`)
+    navigate(page.createPath(folderId))
   }, [client, fileType, navigate, page])
 
   return { createFile, isCreating }

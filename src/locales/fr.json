@@ -57,7 +57,7 @@
     "menu_download_file": "Télécharger ce fichier",
     "menu_create_note": "Note",
     "menu_create_docs": "Docs",
-    "menu_create_excalidraw": "Excalidraw",
+    "menu_create_excalidraw": "Board",
     "menu_create_grist": "Grist",
     "menu_create_shortcut": "Raccourci",
     "share": "Partager",
@@ -112,7 +112,7 @@
         "video": "Vidéos",
         "archive": "Archives",
         "audio": "Audio",
-        "draw": "Dessins",
+        "draw": "Boards",
         "shortcut": "Raccourcis"
       }
     }
@@ -599,7 +599,7 @@
     "url_badformat": "L'URL saisie n'est pas dans le bon format"
   },
   "Excalidraw": {
-    "createFileName": "Nouveau dessin",
+    "createFileName": "Nouveau board",
     "collaboration": {
       "guest": "Invité"
     }
@@ -875,19 +875,22 @@
     "title": {
       "text": "Derniers documents",
       "sheet": "Dernières feuilles de calcul",
-      "slide": "Dernières présentations"
+      "slide": "Dernières présentations",
+      "excalidraw": "Derniers boards"
     },
     "empty": {
       "welcome": "Bienvenue sur %{app}",
       "after_created": {
         "text": "Une fois votre document créé, il vous est possible de le retrouver dans ",
         "sheet": "Une fois votre feuille de calcul créée, il vous est possible de la retrouver dans ",
-        "slide": "Une fois votre présentation créée, il vous est possible de la retrouver dans "
+        "slide": "Une fois votre présentation créée, il vous est possible de la retrouver dans ",
+        "excalidraw": "Une fois votre board créé, il vous est possible de le retrouver dans "
       },
       "create": {
         "text": "Créer un document",
         "sheet": "Créer une feuille de calcul",
-        "slide": "Créer une présentation"
+        "slide": "Créer une présentation",
+        "excalidraw": "Créer un board"
       }
     }
   }

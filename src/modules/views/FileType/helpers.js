@@ -23,6 +23,8 @@ import { canWriteOfficeDocument } from '@/modules/views/OnlyOffice/helpers'
 // - appIcon, appTextIcon: shown in the bar instead of the Drive ones
 // - appName: product name of the empty page welcome
 // - folderName: default path of the folder new files are created in
+// - folderDecorations: color and icon the folder is customized with, as the
+//   Personalize folder action does, so it looks like its app
 export const FILE_TYPE_PAGES = {
   text: {
     classes: ['text', 'document'],
@@ -31,7 +33,8 @@ export const FILE_TYPE_PAGES = {
     appIcon: DocApp,
     appTextIcon: DocAppText,
     appName: 'Twake Doc',
-    folderName: 'Doc'
+    folderName: 'Doc',
+    folderDecorations: { color: '#0076ED', icon: 'Text', icon_color: '#FFFFFF' }
   },
   sheet: {
     classes: ['spreadsheet', 'sheet'],
@@ -40,7 +43,8 @@ export const FILE_TYPE_PAGES = {
     appIcon: SpreadsheetApp,
     appTextIcon: SpreadsheetAppText,
     appName: 'Twake Spreadsheet',
-    folderName: 'Spreadsheet'
+    folderName: 'Spreadsheet',
+    folderDecorations: { color: '#0D9E30', icon: 'Grid', icon_color: '#FFFFFF' }
   },
   slide: {
     classes: ['slide', 'presentation'],
@@ -49,7 +53,12 @@ export const FILE_TYPE_PAGES = {
     appIcon: PresentationApp,
     appTextIcon: PresentationAppText,
     appName: 'Twake Presentation',
-    folderName: 'Presentation'
+    folderName: 'Presentation',
+    folderDecorations: {
+      color: '#FF9500',
+      icon: 'PieChart',
+      icon_color: '#FFFFFF'
+    }
   },
   excalidraw: {
     mimes: [EXCALIDRAW_MIME],
@@ -58,7 +67,8 @@ export const FILE_TYPE_PAGES = {
     appIcon: BoardApp,
     appTextIcon: BoardAppText,
     appName: 'Twake Board',
-    folderName: 'Board'
+    folderName: 'Board',
+    folderDecorations: { color: '#6965DB', icon: 'Pen', icon_color: '#FFFFFF' }
   }
 }
 

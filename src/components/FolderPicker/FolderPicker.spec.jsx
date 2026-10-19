@@ -94,7 +94,7 @@ describe('FolderPicker', () => {
       name: 'Back'
     })
     fireEvent.click(backButton)
-    await screen.findByText('Files')
+    await screen.findByText('My Drive')
 
     const moveButton = screen.queryByRole('button', {
       name: 'Move'

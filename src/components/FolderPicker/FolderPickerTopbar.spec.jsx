@@ -124,7 +124,7 @@ describe('FolderPickerTopbar', () => {
   it('should hide back button for the root cozy folder', () => {
     setup({ folder: rootCozyFolder })
 
-    expect(screen.getByText('Files')).toBeInTheDocument()
+    expect(screen.getByText('My Drive')).toBeInTheDocument()
 
     const backButton = screen.queryByRole('button', {
       name: 'Back'

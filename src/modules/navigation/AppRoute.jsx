@@ -109,6 +109,7 @@ const FileTypeLayout = () => {
       appTextIcon={page.appTextIcon}
       sidebarActions={<FileTypeCreateButton fileType={fileType} page={page} />}
       nav={<FileTypeNav fileType={fileType} />}
+      withStorage={false}
     />
   )
 

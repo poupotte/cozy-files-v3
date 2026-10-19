@@ -64,7 +64,8 @@ const LayoutContent = ({
   appIcon,
   appTextIcon,
   sidebarActions,
-  nav
+  nav,
+  withStorage
 }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -168,9 +169,11 @@ const LayoutContent = ({
             {isDesktop && (
               <div>
                 {flag('drive.file-picker-demo.enabled') && <FilePickerButton />}
-                <div className="u-p-1-half">
-                  <Storage />
-                </div>
+                {withStorage && (
+                  <div className="u-p-1-half">
+                    <Storage />
+                  </div>
+                )}
                 <ButtonClient />
               </div>
             )}
@@ -193,13 +196,15 @@ const LayoutContent = ({
 // withSidebar=false and the bar icons are for standalone pages opened from
 // outside Drive (e.g. the Home entrypoints), not reachable from the navigation.
 // sidebarActions and nav replace the Drive add buttons and navigation, for
-// pages with their own sections (e.g. the file type pages).
+// pages with their own sections (e.g. the file type pages), which also hide
+// the storage gauge with withStorage=false.
 const Layout = ({
   withSidebar = true,
   appIcon,
   appTextIcon,
   sidebarActions,
-  nav
+  nav,
+  withStorage = true
 }) => {
   return (
     <NavProvider>
@@ -209,6 +214,7 @@ const Layout = ({
         appTextIcon={appTextIcon}
         sidebarActions={sidebarActions}
         nav={nav}
+        withStorage={withStorage}
       />
     </NavProvider>
   )

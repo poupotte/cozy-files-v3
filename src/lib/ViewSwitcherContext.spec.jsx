@@ -119,4 +119,40 @@ describe('ViewSwitcherContext', () => {
     const { Q } = jest.requireMock('cozy-client')
     expect(Q).toHaveBeenCalledWith(DOCTYPE_FILES_SETTINGS)
   })
+  it('starts with the default view of a page and saves its own pick', async () => {
+    const pageWrapper = ({ children }) => (
+      <ViewSwitcherContextProvider
+        settingKey="preferredBoardViewType"
+        defaultViewType="grid"
+      >
+        {children}
+      </ViewSwitcherContextProvider>
+    )
+    const existing = {
+      _id: 'settings-id',
+      _type: DOCTYPE_FILES_SETTINGS,
+      attributes: { preferredDriveViewType: 'grid' }
+    }
+    mockClient.query
+      .mockResolvedValueOnce({ data: [] })
+      .mockResolvedValueOnce({ data: [existing] })
+
+    const { result } = renderHook(() => useViewSwitcherContext(), {
+      wrapper: pageWrapper
+    })
+
+    expect(result.current.viewType).toBe('grid')
+
+    await act(async () => {
+      await result.current.switchView('list')
+    })
+
+    expect(mockClient.save).toHaveBeenCalledWith({
+      ...existing,
+      attributes: {
+        preferredDriveViewType: 'grid',
+        preferredBoardViewType: 'list'
+      }
+    })
+  })
 })

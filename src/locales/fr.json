@@ -80,7 +80,10 @@
     "sharings_tabs": "Onglets des partages",
     "sharings_tab_with_me": "Avec moi",
     "sharings_tab_by_me": "Par moi",
-    "sharings_tab_drives": "Drives d'équipe"
+    "sharings_tab_drives": "Drives d'équipe",
+    "root_tabs": "Onglets des fichiers",
+    "root_tab_mine": "Mes fichiers",
+    "root_tab_apps": "Applications"
   },
   "filters": {
     "contact": {

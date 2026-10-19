@@ -80,7 +80,10 @@
     "sharings_tabs": "Sharings tabs",
     "sharings_tab_with_me": "With me",
     "sharings_tab_by_me": "By me",
-    "sharings_tab_drives": "Team drives"
+    "sharings_tab_drives": "Team drives",
+    "root_tabs": "Files tabs",
+    "root_tab_mine": "My files",
+    "root_tab_apps": "Apps"
   },
   "filters": {
     "contact": {

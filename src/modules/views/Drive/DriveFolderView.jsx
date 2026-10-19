@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useParams, useSearchParams } from 'react-router-dom'
 
 import flag from 'cozy-flags'
 import {
@@ -9,7 +9,11 @@ import {
 } from 'cozy-sharing'
 import { makeActions } from 'cozy-ui/transpiled/react/ActionsMenu/Actions'
 
+import RootTabs from './RootTabs'
+import { ROOT_TAB_APPS, ROOT_TAB_MINE, filterRootTab } from './helpers'
 import { useDriveQueries } from './useDriveQueries'
+
+import styles from '@/styles/topbar.styl'
 
 import useHead from '@/components/useHead'
 import { ROOT_DIR_ID } from '@/constants/config'
@@ -58,6 +62,7 @@ const DriveFolderView = () => {
   const { t } = base
   const params = useParams()
   const currentFolderId = useCurrentFolderId()
+  const [searchParams, setSearchParams] = useSearchParams()
   useHead()
   const { isBigThumbnail, toggleThumbnailSize } = useThumbnailSizeContext()
   const sharingContext = useSharingContext()
@@ -84,11 +89,19 @@ const DriveFolderView = () => {
   // Sharings section, not My Drive. Wait until the sharing context is fully
   // loaded so isOwner can tell a received share from the user's own folders;
   // filtering earlier sees an incomplete picture and would show-then-hide them.
-  const allResults = useMemo(
-    () =>
-      allLoaded ? filterOutReceivedShares(rawResults, isOwner) : rawResults,
-    [allLoaded, rawResults, isOwner]
-  )
+  // The root is split in two tabs, so that the folders created by apps do not
+  // crowd the user's own files.
+  const isRoot = currentFolderId === ROOT_DIR_ID
+  const rootTab =
+    searchParams.get('tab') === ROOT_TAB_APPS ? ROOT_TAB_APPS : ROOT_TAB_MINE
+  const handleRootTabChange = tab =>
+    setSearchParams(tab === ROOT_TAB_APPS ? { tab } : {})
+  const allResults = useMemo(() => {
+    const results = allLoaded
+      ? filterOutReceivedShares(rawResults, isOwner)
+      : rawResults
+    return isRoot ? filterRootTab(results, rootTab) : results
+  }, [allLoaded, rawResults, isOwner, isRoot, rootTab])
   const [foldersResult, filesResult] = allResults
   const canWriteToCurrentFolder = hasWriteAccess(currentFolderId)
 
@@ -170,11 +183,31 @@ const DriveFolderView = () => {
             displayedFolder={displayedFolder}
           >
             <FolderViewHeader>
-              {currentFolderId && (
-                <FolderViewBreadcrumb
-                  rootBreadcrumbPath={rootBreadcrumbPath}
-                  currentFolderId={currentFolderId}
-                />
+              {isRoot ? (
+                <>
+                  {/* Keeps the title at its content width so the tabs sit
+                      right next to it, as on the Sharings page. */}
+                  <div className={styles['fil-sharings-title']}>
+                    <FolderViewBreadcrumb
+                      rootBreadcrumbPath={rootBreadcrumbPath}
+                      currentFolderId={currentFolderId}
+                    />
+                  </div>
+                  {!base.isMobile && (
+                    <RootTabs
+                      tab={rootTab}
+                      onChange={handleRootTabChange}
+                      className="u-ml-2"
+                    />
+                  )}
+                </>
+              ) : (
+                currentFolderId && (
+                  <FolderViewBreadcrumb
+                    rootBreadcrumbPath={rootBreadcrumbPath}
+                    currentFolderId={currentFolderId}
+                  />
+                )
               )}
               <Toolbar
                 canUpload={true}
@@ -184,6 +217,9 @@ const DriveFolderView = () => {
                 toggleThumbnailSize={toggleThumbnailSize}
               />
             </FolderViewHeader>
+            {isRoot && base.isMobile && (
+              <RootTabs tab={rootTab} onChange={handleRootTabChange} />
+            )}
             {flag('drive.virtualization.enabled') && !base.isMobile ? (
               <FolderViewBodyVz
                 actions={actions}

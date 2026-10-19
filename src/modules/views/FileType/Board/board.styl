@@ -1,0 +1,168 @@
+// Board page, on the model of the VK Board home: a row of templates to start
+// from, then the boards as tiles showing their drawing.
+
+.boardHome
+    padding 0 1rem 2rem
+
+.boardSection-title
+    margin 1.5rem 0 .75rem
+    font-size 1rem
+    font-weight 600
+    color var(--primaryTextColor)
+
+.boardStrip-list
+    display flex
+    gap 1rem
+    margin 0
+    padding 0 0 .5rem
+    list-style none
+    overflow-x auto
+    scroll-snap-type x proximity
+
+    > li
+        flex 0 0 11rem
+        scroll-snap-align start
+
+.boardTemplate
+    display flex
+    flex-direction column
+    gap .5rem
+    width 100%
+    padding 0
+    border 0
+    background none
+    color inherit
+    font inherit
+    text-align left
+    cursor pointer
+
+    &:disabled
+        cursor progress
+        opacity .6
+
+    &:hover .boardPreview,
+    &:focus-visible .boardPreview
+        border-color var(--primaryColor)
+        box-shadow var(--shadow2)
+
+    &:focus-visible
+        outline 0
+
+.boardTemplate-blank
+    display flex
+    align-items center
+    justify-content center
+    aspect-ratio 16 / 10
+    border 1px dashed var(--primaryColor)
+    border-radius 12px
+    background-color var(--primaryBackgroundLight, var(--contrastBackgroundColor))
+    color var(--primaryColor)
+
+.boardTemplate:hover .boardTemplate-blank,
+.boardTemplate:focus-visible .boardTemplate-blank
+    border-style solid
+    box-shadow var(--shadow2)
+
+.boardTemplate-name
+    font-size .875rem
+    font-weight 500
+
+.boardPreview
+    display block
+    position relative
+    aspect-ratio 16 / 10
+    overflow hidden
+    border 1px solid var(--dividerColor)
+    border-radius 12px
+    // Dotted canvas, as an Excalidraw board, so an empty board still reads
+    // as one
+    background-color var(--defaultBackgroundColor)
+    background-image radial-gradient(var(--dividerColor) 1px, transparent 1px)
+    background-size 12px 12px
+    transition border-color .15s, box-shadow .15s
+
+    &[data-status='loading']
+        background-image linear-gradient(90deg, transparent, var(--contrastBackgroundColor), transparent)
+        background-size 200% 100%
+        animation boardPreviewLoading 1.2s linear infinite
+
+.boardPreview-drawing
+    position absolute
+    inset .5rem
+
+    svg
+        width 100%
+        height 100%
+
+@keyframes boardPreviewLoading
+    from
+        background-position 100% 0
+    to
+        background-position -100% 0
+
+.boardGrid
+    display grid
+    grid-template-columns repeat(auto-fill, minmax(14rem, 1fr))
+    gap 1.5rem 1rem
+    margin 0
+    padding 0
+    list-style none
+
+.boardGrid-empty
+    margin 0
+    color var(--secondaryTextColor)
+
+.boardCard
+    position relative
+
+    &:hover .boardCard-menu,
+    &:focus-within .boardCard-menu
+        opacity 1
+
+    &:hover .boardPreview
+        border-color var(--primaryColor)
+        box-shadow var(--shadow2)
+
+.boardCard-open
+    display flex
+    flex-direction column
+    width 100%
+    padding 0
+    border 0
+    background none
+    color inherit
+    font inherit
+    text-align left
+    cursor pointer
+
+    &:focus-visible
+        outline 0
+
+        .boardPreview
+            border-color var(--primaryColor)
+            box-shadow var(--shadow2)
+
+.boardCard-name
+    margin-top .5rem
+    overflow hidden
+    font-weight 500
+    white-space nowrap
+    text-overflow ellipsis
+
+.boardCard-date
+    font-size .75rem
+    color var(--secondaryTextColor)
+
+.boardCard-menu
+    position absolute
+    top .5rem
+    right .5rem
+    opacity 0
+    background-color var(--paperBackgroundColor) !important
+    box-shadow var(--shadow1)
+    transition opacity .15s
+
+// Touch screens have no hover: keep the menu in sight.
+@media (hover: none)
+    .boardCard-menu
+        opacity 1

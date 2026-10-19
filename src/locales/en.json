@@ -888,6 +888,9 @@
       "slide": "Latest presentations",
       "excalidraw": "Latest boards"
     },
+    "title_home": {
+      "excalidraw": "My boards"
+    },
     "empty": {
       "welcome": "Welcome on %{app}",
       "after_created": {
@@ -901,6 +904,43 @@
         "sheet": "Create a spreadsheet",
         "slide": "Create a presentation",
         "excalidraw": "Create a board"
+      }
+    }
+  },
+  "BoardHome": {
+    "create_title": "Create a board",
+    "blank": "Blank board",
+    "list_title": "Recently modified",
+    "no_board": "Your boards will show here.",
+    "open": "Open %{name}",
+    "more": "More actions",
+    "updated": "Modified %{date}",
+    "templates": {
+      "mindmap": {
+        "name": "Mind map",
+        "center": "Main idea",
+        "idea": "Idea %{n}"
+      },
+      "workflow": {
+        "name": "Workflow",
+        "start": "Start",
+        "step1": "Step 1",
+        "step2": "Step 2",
+        "end": "End"
+      },
+      "retro": {
+        "name": "Team retro",
+        "title": "Team retrospective",
+        "went_well": "What went well",
+        "to_improve": "What to improve",
+        "actions": "Actions"
+      },
+      "kanban": {
+        "name": "Kanban",
+        "title": "Kanban",
+        "todo": "To do",
+        "doing": "In progress",
+        "done": "Done"
       }
     }
   }

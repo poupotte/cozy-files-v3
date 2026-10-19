@@ -15,6 +15,10 @@ jest.mock('twake-i18n', () => ({
   useI18n: () => ({ t: key => key })
 }))
 jest.mock('@/lib/logger', () => ({ error: jest.fn() }))
+jest.mock('@/modules/views/FileType/Board/boardTemplates', () => ({
+  getBoardTemplate: id => (id === 'kanban' ? { id } : null),
+  makeTemplateElements: jest.fn().mockResolvedValue([{ id: 'note' }])
+}))
 
 describe('useCreateFile', () => {
   const client = {
@@ -67,5 +71,21 @@ describe('useCreateFile', () => {
 
     await waitFor(() => expect(result.current.status).toBe('error'))
     expect(result.current.fileId).toBeNull()
+  })
+
+  it('should start the board from its template, named after it', async () => {
+    uploadFileWithConflictStrategy.mockResolvedValue({
+      data: { id: 'new-file-id' }
+    })
+
+    const { result } = renderHook(() =>
+      useCreateFile('folder123', undefined, 'kanban')
+    )
+
+    await waitFor(() => expect(result.current.status).toBe('loaded'))
+
+    const [, content, options] = uploadFileWithConflictStrategy.mock.calls[0]
+    expect(options.name).toBe('BoardHome.templates.kanban.name.excalidraw')
+    expect(JSON.parse(content).elements).toEqual([{ id: 'note' }])
   })
 })

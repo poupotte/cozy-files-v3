@@ -14,7 +14,11 @@ const Create = ({ isPublic = false }) => {
   // folder of the new drawing.
   const [searchParams] = useSearchParams()
   const redirectLink = searchParams.get('redirectLink')
-  const { status, fileId } = useCreateFile(folderId, driveId)
+  const { status, fileId } = useCreateFile(
+    folderId,
+    driveId,
+    searchParams.get('template')
+  )
 
   if (status === 'error') {
     return <Oops />

@@ -888,6 +888,9 @@
       "slide": "Dernières présentations",
       "excalidraw": "Derniers boards"
     },
+    "title_home": {
+      "excalidraw": "Mes tableaux"
+    },
     "empty": {
       "welcome": "Bienvenue sur %{app}",
       "after_created": {
@@ -901,6 +904,43 @@
         "sheet": "Créer une feuille de calcul",
         "slide": "Créer une présentation",
         "excalidraw": "Créer un board"
+      }
+    }
+  },
+  "BoardHome": {
+    "create_title": "Créer un tableau",
+    "blank": "Tableau vide",
+    "list_title": "Modifiés récemment",
+    "no_board": "Tes tableaux apparaîtront ici.",
+    "open": "Ouvrir %{name}",
+    "more": "Plus d’actions",
+    "updated": "Modifié %{date}",
+    "templates": {
+      "mindmap": {
+        "name": "Carte mentale",
+        "center": "Idée principale",
+        "idea": "Idée %{n}"
+      },
+      "workflow": {
+        "name": "Workflow",
+        "start": "Début",
+        "step1": "Étape 1",
+        "step2": "Étape 2",
+        "end": "Fin"
+      },
+      "retro": {
+        "name": "Rétro d’équipe",
+        "title": "Rétrospective d’équipe",
+        "went_well": "Ce qui a bien marché",
+        "to_improve": "À améliorer",
+        "actions": "Actions"
+      },
+      "kanban": {
+        "name": "Kanban",
+        "title": "Kanban",
+        "todo": "À faire",
+        "doing": "En cours",
+        "done": "Terminé"
       }
     }
   }

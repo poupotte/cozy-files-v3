@@ -47,4 +47,31 @@ describe('useCreateFileTypeFile', () => {
       'drive#/type/excalidraw?f.contact=alice'
     )
   })
+
+  it('passes the template a board starts from to the create route', async () => {
+    ensureFileTypeFolder.mockResolvedValue({ _id: 'board-folder' })
+    const wrapper = ({ children }) => (
+      <MemoryRouter
+        future={ROUTER_FUTURE_FLAGS}
+        initialEntries={['/type/excalidraw']}
+      >
+        {children}
+      </MemoryRouter>
+    )
+    const { result } = renderHook(
+      () => ({
+        create: useCreateFileTypeFile(
+          'excalidraw',
+          getFileTypePage('excalidraw')
+        ),
+        location: useLocation()
+      }),
+      { wrapper }
+    )
+
+    await act(() => result.current.create.createFile('kanban'))
+
+    const { search } = result.current.location
+    expect(new URLSearchParams(search).get('template')).toBe('kanban')
+  })
 })

@@ -10,6 +10,9 @@ import {
 import { makeActions } from 'cozy-ui/transpiled/react/ActionsMenu/Actions'
 import { Content } from 'cozy-ui/transpiled/react/Layout'
 
+import { BoardCreateStrip } from './Board/BoardCreateStrip'
+import { BoardGrid } from './Board/BoardGrid'
+import boardStyles from './Board/board.styl'
 import { FileTypeEmpty } from './FileTypeEmpty'
 import { FileTypeHeader } from './FileTypeHeader'
 import { FileTypeListProvider } from './FileTypeList'
@@ -30,6 +33,7 @@ import useHead from '@/components/useHead'
 import { RECENT_FOLDER_ID } from '@/constants/config'
 import { useFolderSort } from '@/hooks'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import { useViewSwitcherContext } from '@/lib/ViewSwitcherContext'
 import {
   download,
   trash,
@@ -52,9 +56,16 @@ const FileTypeViewContent = ({ fileType, page, createdByMe }) => {
   const sharingContext = useSharingContext()
   const { allLoaded, refresh, isOwner, byDocId } = sharingContext
   const nativeSharing = useNativeFileSharing()
-  const title = base.t(
-    `FileTypeView.${createdByMe ? 'title_created_by_me' : 'title'}.${fileType}`
-  )
+  // The grid view of a board page is the board home: its templates and the
+  // drawings as tiles, never the welcome page.
+  const { viewType } = useViewSwitcherContext()
+  const isBoardHome = Boolean(page.withBoardHome) && viewType === 'grid'
+  const titleKey = createdByMe
+    ? 'title_created_by_me'
+    : isBoardHome
+      ? 'title_home'
+      : 'title'
+  const title = base.t(`FileTypeView.${titleKey}.${fileType}`)
   useHead({ title })
   useFileTypeFavicon(fileType)
   const [sortOrder, setSortOrder, isSettingsLoaded] =
@@ -130,7 +141,7 @@ const FileTypeViewContent = ({ fileType, page, createdByMe }) => {
   return (
     <FolderView>
       <Content className={base.isMobile ? '' : 'u-pt-1'}>
-        {showHeader && (
+        {(showHeader || (isBoardHome && !isFirstLoad)) && (
           <FileTypeHeader
             title={title}
             fileType={fileType}
@@ -138,32 +149,48 @@ const FileTypeViewContent = ({ fileType, page, createdByMe }) => {
             isMobile={base.isMobile}
           />
         )}
-        {hasNoFile ? (
-          <FileTypeEmpty
-            fileType={fileType}
-            page={page}
-            onCreate={createFile}
-            isCreating={isCreating}
-          />
-        ) : null}
-        {hasNoFile ? null : flag('drive.virtualization.enabled') &&
-          !base.isMobile ? (
-          <FolderViewBodyVz
-            actions={actions}
-            queryResults={[filteredResult]}
-            withFilePath={true}
-            orderProps={{
-              sortOrder,
-              setOrder: setSortOrder,
-              isSettingsLoaded
-            }}
-          />
+        {isBoardHome ? (
+          <div className={boardStyles['boardHome']}>
+            {!createdByMe && (
+              <BoardCreateStrip onCreate={createFile} isCreating={isCreating} />
+            )}
+            <BoardGrid
+              result={result}
+              files={filteredResult.data ?? []}
+              actions={actions}
+              title={createdByMe ? null : base.t('BoardHome.list_title')}
+            />
+          </div>
         ) : (
-          <FolderViewBody
-            actions={actions}
-            queryResults={[filteredResult]}
-            withFilePath={true}
-          />
+          <>
+            {hasNoFile ? (
+              <FileTypeEmpty
+                fileType={fileType}
+                page={page}
+                onCreate={createFile}
+                isCreating={isCreating}
+              />
+            ) : null}
+            {hasNoFile ? null : flag('drive.virtualization.enabled') &&
+              !base.isMobile ? (
+              <FolderViewBodyVz
+                actions={actions}
+                queryResults={[filteredResult]}
+                withFilePath={true}
+                orderProps={{
+                  sortOrder,
+                  setOrder: setSortOrder,
+                  isSettingsLoaded
+                }}
+              />
+            ) : (
+              <FolderViewBody
+                actions={actions}
+                queryResults={[filteredResult]}
+                withFilePath={true}
+              />
+            )}
+          </>
         )}
         <FileTypeListProvider
           result={result}

@@ -27,6 +27,8 @@ import { canWriteOfficeDocument } from '@/modules/views/OnlyOffice/helpers'
 //   Personalize folder action does, so it looks like its app
 // - defaultViewType, viewTypeSetting: list or grid view shown until one is
 //   picked, and the settings attribute the pick of these pages is saved in
+// - withBoardHome: whether the grid view is the board home, with templates
+//   and drawing tiles (see Board/), instead of the Drive grid
 export const FILE_TYPE_PAGES = {
   text: {
     classes: ['text', 'document'],
@@ -72,7 +74,8 @@ export const FILE_TYPE_PAGES = {
     folderName: 'Board',
     folderDecorations: { color: '#6965DB', icon: 'Pen', icon_color: '#FFFFFF' },
     defaultViewType: 'grid',
-    viewTypeSetting: 'preferredBoardViewType'
+    viewTypeSetting: 'preferredBoardViewType',
+    withBoardHome: true
   }
 }
 

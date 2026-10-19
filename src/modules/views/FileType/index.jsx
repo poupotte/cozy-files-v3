@@ -21,8 +21,6 @@ import FolderView from '../Folder/FolderView'
 import FolderViewBody from '../Folder/FolderViewBody'
 import FolderViewHeader from '../Folder/FolderViewHeader'
 import FolderViewBodyVz from '../Folder/virtualized/FolderViewBody'
-import { useRecentFilters } from '../Recent/useRecentFilters'
-import { SharingsFilters } from '../Sharings/SharingsFilters'
 
 import useHead from '@/components/useHead'
 import { RECENT_FOLDER_ID } from '@/constants/config'
@@ -45,9 +43,6 @@ import { removeFromFavorites } from '@/modules/actions/components/removeFromFavo
 import { MobileAwareBreadcrumb as Breadcrumb } from '@/modules/breadcrumb/components/MobileAwareBreadcrumb'
 import { useFolderViewBase } from '@/modules/views/Folder/hooks/useFolderViewBase'
 
-// The type is fixed by the page, so only the contact filter is offered.
-const FILE_TYPE_PAGE_FILTERS = ['contact']
-
 const FileTypeViewContent = ({ fileType, page }) => {
   const base = useFolderViewBase()
   const sharingContext = useSharingContext()
@@ -59,20 +54,14 @@ const FileTypeViewContent = ({ fileType, page }) => {
   const [sortOrder, setSortOrder, isSettingsLoaded] =
     useFolderSort(RECENT_FOLDER_ID)
 
-  const pageFilters = useRecentFilters(FILE_TYPE_PAGE_FILTERS)
-  const { result, contactFilterOptions, filteredResult } = useFileTypeFiles({
-    fileType,
-    page,
-    filters: pageFilters.filters
-  })
+  const { result, filteredResult } = useFileTypeFiles({ fileType, page })
 
   // Without any file of the type, show a welcome page instead of an empty
-  // list. A contact filter matching nothing keeps the regular list.
+  // list.
   const hasNoFile =
     result.fetchStatus === 'loaded' &&
     !result.hasMore &&
-    filteredResult.data.length === 0 &&
-    !pageFilters.hasActiveFilters
+    filteredResult.data.length === 0
   // The welcome page has its own title and Create button. Wait for the first
   // load so the header does not flash before it.
   const isFirstLoad = !result.lastFetch
@@ -147,13 +136,6 @@ const FileTypeViewContent = ({ fileType, page }) => {
             isCreating={isCreating}
           />
         ) : null}
-        {!hasNoFile && !base.isMobile && (
-          <SharingsFilters
-            {...pageFilters}
-            contactFilterLoading={!allLoaded}
-            contactFilterOptions={contactFilterOptions}
-          />
-        )}
         {hasNoFile ? null : flag('drive.virtualization.enabled') &&
           !base.isMobile ? (
           <FolderViewBodyVz

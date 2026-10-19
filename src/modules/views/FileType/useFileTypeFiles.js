@@ -8,7 +8,7 @@ import { buildRecentByClassQuery, buildRecentByMimeQuery } from '@/queries'
  * classifier of the Type filter is applied on top of the class query so both
  * views agree on what a document, spreadsheet, presentation or board is.
  */
-export const useFileTypeFiles = ({ fileType, page, filters }) => {
+export const useFileTypeFiles = ({ fileType, page }) => {
   const query = page.mimes
     ? buildRecentByMimeQuery(page.mimes)
     : buildRecentByClassQuery(page.classes)
@@ -18,7 +18,7 @@ export const useFileTypeFiles = ({ fileType, page, filters }) => {
     result,
     ...useFilteredRecents({
       result,
-      filters: { ...filters, type: fileType }
+      filters: { type: fileType }
     })
   }
 }

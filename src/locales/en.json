@@ -892,6 +892,9 @@
       "excalidraw": "Latest boards"
     },
     "title_home": {
+      "text": "My documents",
+      "sheet": "My spreadsheets",
+      "slide": "My presentations",
       "excalidraw": "My boards"
     },
     "empty": {
@@ -907,6 +910,196 @@
         "sheet": "Create a spreadsheet",
         "slide": "Create a presentation",
         "excalidraw": "Create a board"
+      }
+    }
+  },
+  "OfficeHome": {
+    "create_title": {
+      "text": "Start a new document",
+      "sheet": "Start a new spreadsheet",
+      "slide": "Start a new presentation"
+    },
+    "blank": {
+      "text": "Blank document",
+      "sheet": "Blank spreadsheet",
+      "slide": "Blank presentation"
+    },
+    "no_file": {
+      "text": "Your documents will show here.",
+      "sheet": "Your spreadsheets will show here.",
+      "slide": "Your presentations will show here."
+    },
+    "sheet_count": "%{smart_count} sheet |||| %{smart_count} sheets",
+    "slide_count": "%{smart_count} slide |||| %{smart_count} slides",
+    "templates": {
+      "meeting_notes": {
+        "name": "Meeting notes",
+        "title": "Meeting notes",
+        "info": "Date · Attendees",
+        "agenda": "Agenda",
+        "topic1": "First topic",
+        "topic2": "Second topic",
+        "notes": "Notes",
+        "notes_text": "What was said and decided.",
+        "actions": "Action items",
+        "action1": "Who does what, by when",
+        "action2": "Who does what, by when"
+      },
+      "project_proposal": {
+        "name": "Project proposal",
+        "title": "Project name",
+        "info": "Prepared by · Date",
+        "overview": "Overview",
+        "overview_text": "Describe the project and the need it answers in a few sentences.",
+        "goals": "Goals",
+        "goal1": "First goal",
+        "goal2": "Second goal",
+        "timeline": "Timeline",
+        "phase1": "Phase 1: what and when",
+        "phase2": "Phase 2: what and when",
+        "budget": "Budget",
+        "budget_text": "Estimated cost and the resources needed."
+      },
+      "letter": {
+        "name": "Letter",
+        "sender": "Your name, your address",
+        "date": "Date",
+        "recipient": "Recipient name, recipient address",
+        "greeting": "Dear …,",
+        "body": "Write your letter here.",
+        "closing": "Kind regards,",
+        "signature": "Your name"
+      },
+      "resume": {
+        "name": "Resume",
+        "title": "Your name",
+        "info": "Job title · Email · Phone",
+        "experience": "Experience",
+        "job1": "Job title, company: dates",
+        "job2": "Job title, company: dates",
+        "education": "Education",
+        "school": "Degree, school: year",
+        "skills": "Skills",
+        "skills_text": "Your main skills and languages."
+      },
+      "todo": {
+        "name": "To-do list",
+        "title": "To-do list",
+        "task": "Task",
+        "owner": "Owner",
+        "due": "Due date",
+        "status": "Status",
+        "task1": "First task",
+        "task2": "Second task",
+        "task3": "Third task",
+        "owner1": "Alice",
+        "owner2": "Bob",
+        "due1": "Monday",
+        "due2": "Wednesday",
+        "due3": "Friday",
+        "todo": "To do",
+        "doing": "In progress",
+        "done": "Done"
+      },
+      "budget": {
+        "name": "Monthly budget",
+        "title": "Monthly budget",
+        "category": "Category",
+        "planned": "Planned",
+        "actual": "Actual",
+        "difference": "Difference",
+        "housing": "Housing",
+        "food": "Food",
+        "transport": "Transport",
+        "leisure": "Leisure",
+        "total": "Total"
+      },
+      "schedule": {
+        "name": "Weekly schedule",
+        "title": "Weekly schedule",
+        "time": "Time",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "h9": "9:00",
+        "h10": "10:00",
+        "h11": "11:00",
+        "h14": "14:00",
+        "h16": "16:00",
+        "event1": "Team meeting",
+        "event2": "Customer call",
+        "event3": "Review"
+      },
+      "invoice": {
+        "name": "Invoice",
+        "title": "Invoice",
+        "description": "Description",
+        "quantity": "Quantity",
+        "unit_price": "Unit price",
+        "amount": "Amount",
+        "item1": "Consulting day",
+        "item2": "Development",
+        "item3": "Support hour",
+        "total": "Total"
+      },
+      "pitch": {
+        "name": "Pitch",
+        "title": "Project name",
+        "subtitle": "Your idea in one sentence",
+        "problem": "The problem",
+        "problem1": "Who has it",
+        "problem2": "Why it matters",
+        "solution": "Our solution",
+        "solution1": "What it does",
+        "solution2": "Why it is better",
+        "market": "Market",
+        "market1": "Who will use it",
+        "market2": "How big it is",
+        "team": "Team",
+        "team1": "Who we are",
+        "team2": "What we have done",
+        "ask": "What we ask",
+        "ask1": "Funding or support needed",
+        "ask2": "What it will allow"
+      },
+      "kickoff": {
+        "name": "Project kick-off",
+        "title": "Project kick-off",
+        "subtitle": "Team · Date",
+        "goals": "Goals",
+        "goal1": "What success looks like",
+        "goal2": "How we measure it",
+        "scope": "Scope",
+        "scope1": "What is in",
+        "scope2": "What is out",
+        "timeline": "Timeline",
+        "phase1": "Phase 1",
+        "phase2": "Phase 2",
+        "phase3": "Delivery",
+        "roles": "Roles",
+        "role1": "Who decides",
+        "role2": "Who does what",
+        "next": "Next steps",
+        "next1": "First actions",
+        "next2": "Next meeting"
+      },
+      "team_update": {
+        "name": "Weekly team update",
+        "title": "Weekly update",
+        "subtitle": "Team · Week",
+        "wins": "Wins",
+        "win1": "What went well",
+        "win2": "What we delivered",
+        "progress": "In progress",
+        "progress1": "What we are working on",
+        "progress2": "Where we are",
+        "blockers": "Blockers",
+        "blocker1": "What slows us down",
+        "next_week": "Next week",
+        "next1": "Priorities",
+        "next2": "Help needed"
       }
     }
   },

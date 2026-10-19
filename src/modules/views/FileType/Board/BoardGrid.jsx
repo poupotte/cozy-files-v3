@@ -19,6 +19,9 @@ import styles from './board.styl'
  * @param {number} [props.limit] - Number of boards shown at most
  * @param {string} [props.seeAllPath] - Page listing every board, linked from
  *   the title when the grid is limited
+ * @param {Function} [props.Card] - Tile of a file, for the Office pages
+ * @param {object} [props.cardProps] - Extra props of each tile
+ * @param {string} [props.emptyLabel] - Text shown without any file
  */
 export const BoardGrid = ({
   result,
@@ -26,7 +29,10 @@ export const BoardGrid = ({
   actions,
   title,
   limit,
-  seeAllPath
+  seeAllPath,
+  Card = BoardCard,
+  cardProps,
+  emptyLabel
 }) => {
   const { t } = useI18n()
   const navigate = useNavigate()
@@ -52,12 +58,12 @@ export const BoardGrid = ({
       {isLoading && <Spinner size="xxlarge" middle />}
       {!isLoading && files.length === 0 && (
         <p className={styles['boardGrid-empty']} data-testid="board-grid-empty">
-          {t('BoardHome.no_board')}
+          {emptyLabel ?? t('BoardHome.no_board')}
         </p>
       )}
       <ul className={styles['boardGrid']}>
         {shownFiles.map(file => (
-          <BoardCard key={file._id} file={file} actions={actions} />
+          <Card key={file._id} file={file} actions={actions} {...cardProps} />
         ))}
       </ul>
       {!limit && result.hasMore && (

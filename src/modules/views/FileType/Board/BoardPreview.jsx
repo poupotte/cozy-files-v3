@@ -5,6 +5,7 @@ import { useClient } from 'cozy-client'
 import { useCozyTheme } from 'cozy-ui-plus/dist/providers/CozyTheme'
 
 import styles from './board.styl'
+import { useIsNearViewport } from '../useIsNearViewport'
 
 import logger from '@/lib/logger'
 import { isExcalidrawScene } from '@/modules/views/Excalidraw/helpers'
@@ -64,32 +65,13 @@ export const BoardPreview = ({ file, elements, className }) => {
   const client = useClient()
   const { type: theme } = useCozyTheme()
   const containerRef = useRef(null)
-  // Without IntersectionObserver (tests, old browsers), draw right away.
-  const [isVisible, setIsVisible] = useState(
-    () => typeof IntersectionObserver === 'undefined'
-  )
+  const isVisible = useIsNearViewport(containerRef)
   const [status, setStatus] = useState('loading')
   // The list gives a new file object on each render: draw again only when
   // the board itself changes.
   const fileId = file?._id ?? null
   const driveId = file?.driveId
   const revision = file ? getRevision(file) : null
-
-  useEffect(() => {
-    const node = containerRef.current
-    if (!node || isVisible) return
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries.some(entry => entry.isIntersecting)) {
-          setIsVisible(true)
-          observer.disconnect()
-        }
-      },
-      { rootMargin: '200px' }
-    )
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [isVisible])
 
   useEffect(() => {
     if (!isVisible) return

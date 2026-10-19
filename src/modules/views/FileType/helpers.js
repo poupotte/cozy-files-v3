@@ -14,6 +14,14 @@ import {
 } from '@/modules/views/Excalidraw/helpers'
 import { canWriteOfficeDocument } from '@/modules/views/OnlyOffice/helpers'
 
+// The Office pages share their home and their pick of the list or grid view,
+// the list being their default.
+const OFFICE_HOME = {
+  home: 'office',
+  defaultViewType: 'list',
+  viewTypeSetting: 'preferredOfficeViewType'
+}
+
 // Pages opened by the Home entrypoints (see manifest.webapp): the recent
 // files of one type, with a Create button for that type only.
 // - classes: io.cozy.files classes queried for the type, or
@@ -27,9 +35,9 @@ import { canWriteOfficeDocument } from '@/modules/views/OnlyOffice/helpers'
 //   Personalize folder action does, so it looks like its app
 // - defaultViewType, viewTypeSetting: list or grid view shown until one is
 //   picked, and the settings attribute the pick of these pages is saved in
-// - withBoardHome: whether the page opens on the board home, with templates
-//   and the latest drawings as tiles (see Board/), its recent files moving
-//   to a section of their own
+// - home: the home the page opens on, 'board' or 'office', with templates
+//   and the latest files as tiles showing their content (see Board/ and
+//   Office/), its recent files moving to a section of their own
 export const FILE_TYPE_PAGES = {
   text: {
     classes: ['text', 'document'],
@@ -39,7 +47,12 @@ export const FILE_TYPE_PAGES = {
     appTextIcon: DocAppText,
     appName: 'Twake Doc',
     folderName: 'Doc',
-    folderDecorations: { color: '#0076ED', icon: 'Text', icon_color: '#FFFFFF' }
+    folderDecorations: {
+      color: '#0076ED',
+      icon: 'Text',
+      icon_color: '#FFFFFF'
+    },
+    ...OFFICE_HOME
   },
   sheet: {
     classes: ['spreadsheet', 'sheet'],
@@ -49,7 +62,12 @@ export const FILE_TYPE_PAGES = {
     appTextIcon: SpreadsheetAppText,
     appName: 'Twake Spreadsheet',
     folderName: 'Spreadsheet',
-    folderDecorations: { color: '#0D9E30', icon: 'Grid', icon_color: '#FFFFFF' }
+    folderDecorations: {
+      color: '#0D9E30',
+      icon: 'Grid',
+      icon_color: '#FFFFFF'
+    },
+    ...OFFICE_HOME
   },
   slide: {
     classes: ['slide', 'presentation'],
@@ -63,7 +81,8 @@ export const FILE_TYPE_PAGES = {
       color: '#FF9500',
       icon: 'PieChart',
       icon_color: '#FFFFFF'
-    }
+    },
+    ...OFFICE_HOME
   },
   excalidraw: {
     mimes: [EXCALIDRAW_MIME],
@@ -76,7 +95,7 @@ export const FILE_TYPE_PAGES = {
     folderDecorations: { color: '#6965DB', icon: 'Pen', icon_color: '#FFFFFF' },
     defaultViewType: 'grid',
     viewTypeSetting: 'preferredBoardViewType',
-    withBoardHome: true
+    home: 'board'
   }
 }
 
@@ -84,7 +103,7 @@ export const getFileTypePage = fileType => FILE_TYPE_PAGES[fileType] ?? null
 
 // Sections of a file type page, as the Drive ones but for files of the type.
 export const FILE_TYPE_SECTION_RECENT = ''
-// Recent files of a page that opens on its home (withBoardHome)
+// Recent files of a page that opens on its home
 export const FILE_TYPE_SECTION_RECENT_LIST = 'recent'
 export const FILE_TYPE_SECTION_CREATED_BY_ME = 'created-by-me'
 export const FILE_TYPE_SECTION_SHARINGS = 'sharings'

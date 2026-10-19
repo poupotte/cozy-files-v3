@@ -23,7 +23,12 @@ const Create = ({ isPublic = false }) => {
   // folder of the new document.
   const [searchParams] = useSearchParams()
   const redirectLink = searchParams.get('redirectLink')
-  const { status, fileId } = useCreateFile(folderId, fileClass, driveId)
+  const { status, fileId } = useCreateFile(
+    folderId,
+    fileClass,
+    driveId,
+    searchParams.get('template')
+  )
   const folderPath = `/folder/${folderId}`
 
   if (!canWriteOfficeDocument()) {

@@ -892,6 +892,9 @@
       "excalidraw": "Derniers boards"
     },
     "title_home": {
+      "text": "Mes documents",
+      "sheet": "Mes feuilles de calcul",
+      "slide": "Mes présentations",
       "excalidraw": "Mes tableaux"
     },
     "empty": {
@@ -907,6 +910,196 @@
         "sheet": "Créer une feuille de calcul",
         "slide": "Créer une présentation",
         "excalidraw": "Créer un board"
+      }
+    }
+  },
+  "OfficeHome": {
+    "create_title": {
+      "text": "Créer un document",
+      "sheet": "Créer une feuille de calcul",
+      "slide": "Créer une présentation"
+    },
+    "blank": {
+      "text": "Document vierge",
+      "sheet": "Feuille de calcul vierge",
+      "slide": "Présentation vierge"
+    },
+    "no_file": {
+      "text": "Tes documents s'afficheront ici.",
+      "sheet": "Tes feuilles de calcul s'afficheront ici.",
+      "slide": "Tes présentations s'afficheront ici."
+    },
+    "sheet_count": "%{smart_count} feuille |||| %{smart_count} feuilles",
+    "slide_count": "%{smart_count} diapositive |||| %{smart_count} diapositives",
+    "templates": {
+      "meeting_notes": {
+        "name": "Compte rendu de réunion",
+        "title": "Compte rendu de réunion",
+        "info": "Date · Participants",
+        "agenda": "Ordre du jour",
+        "topic1": "Premier sujet",
+        "topic2": "Deuxième sujet",
+        "notes": "Notes",
+        "notes_text": "Ce qui a été dit et décidé.",
+        "actions": "Actions",
+        "action1": "Qui fait quoi, pour quand",
+        "action2": "Qui fait quoi, pour quand"
+      },
+      "project_proposal": {
+        "name": "Proposition de projet",
+        "title": "Nom du projet",
+        "info": "Rédigé par · Date",
+        "overview": "Présentation",
+        "overview_text": "Décris le projet et le besoin auquel il répond en quelques phrases.",
+        "goals": "Objectifs",
+        "goal1": "Premier objectif",
+        "goal2": "Deuxième objectif",
+        "timeline": "Calendrier",
+        "phase1": "Phase 1 : quoi et quand",
+        "phase2": "Phase 2 : quoi et quand",
+        "budget": "Budget",
+        "budget_text": "Coût estimé et moyens nécessaires."
+      },
+      "letter": {
+        "name": "Lettre",
+        "sender": "Ton nom, ton adresse",
+        "date": "Date",
+        "recipient": "Nom du destinataire, adresse du destinataire",
+        "greeting": "Madame, Monsieur,",
+        "body": "Écris ta lettre ici.",
+        "closing": "Je vous prie d'agréer mes salutations distinguées.",
+        "signature": "Ton nom"
+      },
+      "resume": {
+        "name": "CV",
+        "title": "Ton nom",
+        "info": "Poste · E-mail · Téléphone",
+        "experience": "Expérience",
+        "job1": "Poste, entreprise : dates",
+        "job2": "Poste, entreprise : dates",
+        "education": "Formation",
+        "school": "Diplôme, école : année",
+        "skills": "Compétences",
+        "skills_text": "Tes principales compétences et langues."
+      },
+      "todo": {
+        "name": "Liste de tâches",
+        "title": "Liste de tâches",
+        "task": "Tâche",
+        "owner": "Responsable",
+        "due": "Échéance",
+        "status": "État",
+        "task1": "Première tâche",
+        "task2": "Deuxième tâche",
+        "task3": "Troisième tâche",
+        "owner1": "Alice",
+        "owner2": "Bob",
+        "due1": "Lundi",
+        "due2": "Mercredi",
+        "due3": "Vendredi",
+        "todo": "À faire",
+        "doing": "En cours",
+        "done": "Terminé"
+      },
+      "budget": {
+        "name": "Budget mensuel",
+        "title": "Budget mensuel",
+        "category": "Catégorie",
+        "planned": "Prévu",
+        "actual": "Réel",
+        "difference": "Écart",
+        "housing": "Logement",
+        "food": "Alimentation",
+        "transport": "Transports",
+        "leisure": "Loisirs",
+        "total": "Total"
+      },
+      "schedule": {
+        "name": "Planning de la semaine",
+        "title": "Planning de la semaine",
+        "time": "Heure",
+        "monday": "Lundi",
+        "tuesday": "Mardi",
+        "wednesday": "Mercredi",
+        "thursday": "Jeudi",
+        "friday": "Vendredi",
+        "h9": "9h00",
+        "h10": "10h00",
+        "h11": "11h00",
+        "h14": "14h00",
+        "h16": "16h00",
+        "event1": "Réunion d'équipe",
+        "event2": "Appel client",
+        "event3": "Revue"
+      },
+      "invoice": {
+        "name": "Facture",
+        "title": "Facture",
+        "description": "Description",
+        "quantity": "Quantité",
+        "unit_price": "Prix unitaire",
+        "amount": "Montant",
+        "item1": "Journée de conseil",
+        "item2": "Développement",
+        "item3": "Heure de support",
+        "total": "Total"
+      },
+      "pitch": {
+        "name": "Pitch",
+        "title": "Nom du projet",
+        "subtitle": "Ton idée en une phrase",
+        "problem": "Le problème",
+        "problem1": "Qui le rencontre",
+        "problem2": "Pourquoi c'est important",
+        "solution": "Notre solution",
+        "solution1": "Ce qu'elle fait",
+        "solution2": "Pourquoi elle est meilleure",
+        "market": "Marché",
+        "market1": "Qui va l'utiliser",
+        "market2": "Quelle taille",
+        "team": "Équipe",
+        "team1": "Qui nous sommes",
+        "team2": "Ce que nous avons fait",
+        "ask": "Notre demande",
+        "ask1": "Financement ou soutien nécessaire",
+        "ask2": "Ce que cela permettra"
+      },
+      "kickoff": {
+        "name": "Lancement de projet",
+        "title": "Lancement de projet",
+        "subtitle": "Équipe · Date",
+        "goals": "Objectifs",
+        "goal1": "À quoi ressemble la réussite",
+        "goal2": "Comment on la mesure",
+        "scope": "Périmètre",
+        "scope1": "Ce qui est inclus",
+        "scope2": "Ce qui ne l'est pas",
+        "timeline": "Calendrier",
+        "phase1": "Phase 1",
+        "phase2": "Phase 2",
+        "phase3": "Livraison",
+        "roles": "Rôles",
+        "role1": "Qui décide",
+        "role2": "Qui fait quoi",
+        "next": "Prochaines étapes",
+        "next1": "Premières actions",
+        "next2": "Prochaine réunion"
+      },
+      "team_update": {
+        "name": "Point d'équipe hebdo",
+        "title": "Point de la semaine",
+        "subtitle": "Équipe · Semaine",
+        "wins": "Réussites",
+        "win1": "Ce qui a bien marché",
+        "win2": "Ce que nous avons livré",
+        "progress": "En cours",
+        "progress1": "Ce sur quoi nous travaillons",
+        "progress2": "Où nous en sommes",
+        "blockers": "Blocages",
+        "blocker1": "Ce qui nous freine",
+        "next_week": "La semaine prochaine",
+        "next1": "Priorités",
+        "next2": "Aide nécessaire"
       }
     }
   },

@@ -72,7 +72,7 @@ const isOnPage = (pathname, fileType) =>
 export const FileTypeNav = ({ fileType }) => {
   const { t } = useI18n()
   const clickState = useNavContext()
-  const hasHome = Boolean(getFileTypePage(fileType)?.withBoardHome)
+  const hasHome = Boolean(getFileTypePage(fileType)?.home)
 
   return (
     <UINav>

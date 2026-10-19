@@ -6,11 +6,24 @@ import { useI18n } from 'twake-i18n'
 
 import logger from '@/lib/logger'
 import {
+  applyOfficeTemplate,
+  hasOfficeTemplate
+} from '@/modules/views/FileType/Office/officeTemplates'
+import {
   makeExtByClass,
   makeMimeByClass
 } from '@/modules/views/OnlyOffice/helpers'
 
-const useCreateFile = (folderId, fileClass, driveId = undefined) => {
+// File type pages name the spreadsheets sheet.
+const getFileTypeOfClass = fileClass =>
+  fileClass === 'spreadsheet' ? 'sheet' : fileClass
+
+const useCreateFile = (
+  folderId,
+  fileClass,
+  driveId = undefined,
+  templateId = null
+) => {
   const [status, setStatus] = useState('pending')
   const [fileId, setFileId] = useState(null)
   const { t } = useI18n()
@@ -22,9 +35,14 @@ const useCreateFile = (folderId, fileClass, driveId = undefined) => {
     () => `/onlyOffice/${fileClass}.${fileExt}`,
     [fileClass, fileExt]
   )
+  const fileType = getFileTypeOfClass(fileClass)
+  const template = hasOfficeTemplate(fileType, templateId) ? templateId : null
   const fileName = useMemo(
-    () => t(`OnlyOffice.createFileName.${fileClass}`) + `.${fileExt}`,
-    [t, fileClass, fileExt]
+    () =>
+      (template
+        ? t(`OfficeHome.templates.${template}.name`)
+        : t(`OnlyOffice.createFileName.${fileClass}`)) + `.${fileExt}`,
+    [t, fileClass, fileExt, template]
   )
 
   useEffect(() => {
@@ -32,9 +50,12 @@ const useCreateFile = (folderId, fileClass, driveId = undefined) => {
       const reader = new FileReader()
       reader.onloadend = async () => {
         try {
+          const content = template
+            ? applyOfficeTemplate(reader.result, fileType, template, t)
+            : reader.result
           const { data: createdFile } = await uploadFileWithConflictStrategy(
             client,
-            reader.result,
+            content,
             {
               name: fileName,
               dirId: folderId,
@@ -62,7 +83,18 @@ const useCreateFile = (folderId, fileClass, driveId = undefined) => {
     }
 
     doCreate()
-  }, [fileClass, fileUrl, folderId, fileMime, fileName, driveId, client])
+  }, [
+    fileClass,
+    fileUrl,
+    folderId,
+    fileMime,
+    fileName,
+    driveId,
+    client,
+    fileType,
+    template,
+    t
+  ])
 
   return { status, fileId }
 }

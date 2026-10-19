@@ -16,6 +16,8 @@ import boardStyles from './Board/board.styl'
 import { FileTypeEmpty } from './FileTypeEmpty'
 import { FileTypeHeader } from './FileTypeHeader'
 import { FileTypeListProvider } from './FileTypeList'
+import { OfficeCard } from './Office/OfficeCard'
+import { OfficeCreateStrip } from './Office/OfficeCreateStrip'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
   FILE_TYPE_SECTION_RECENT,
@@ -51,20 +53,21 @@ import { removeFromFavorites } from '@/modules/actions/components/removeFromFavo
 import { useFolderViewBase } from '@/modules/views/Folder/hooks/useFolderViewBase'
 import { useCreatedByMe } from '@/modules/views/Recent/createdByMe'
 
-// Latest boards shown on the board home, the others are in Recent
-const BOARD_HOME_LIMIT = 8
+// Latest files shown on the home of a page, the others are in Recent
+const HOME_LIMIT = 8
 
 const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
   const base = useFolderViewBase()
   const sharingContext = useSharingContext()
   const { allLoaded, refresh, isOwner, byDocId } = sharingContext
   const nativeSharing = useNativeFileSharing()
-  // A board page opens on the board home: its templates and the latest
-  // drawings as tiles, never the welcome page.
-  const isBoardHome = Boolean(page.withBoardHome) && isHome
+  // A page with a home opens on it: its templates and the latest files as
+  // tiles showing their content, never the welcome page.
+  const home = isHome ? page.home : null
+  const isOnHome = Boolean(home)
   const titleKey = createdByMe
     ? 'title_created_by_me'
-    : isBoardHome
+    : isOnHome
       ? 'title_home'
       : 'title'
   const title = base.t(`FileTypeView.${titleKey}.${fileType}`)
@@ -146,24 +149,37 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
   return (
     <FolderView>
       <Content className={base.isMobile ? '' : 'u-pt-1'}>
-        {(showHeader || (isBoardHome && !isFirstLoad)) && (
+        {(showHeader || (isOnHome && !isFirstLoad)) && (
           <FileTypeHeader
             title={title}
             fileType={fileType}
             page={page}
             isMobile={base.isMobile}
-            withViewSwitcher={!isBoardHome}
+            withViewSwitcher={!isOnHome}
           />
         )}
-        {isBoardHome ? (
+        {isOnHome ? (
           <div className={boardStyles['boardHome']}>
-            <BoardCreateStrip onCreate={createFile} isCreating={isCreating} />
+            {home === 'office' ? (
+              <OfficeCreateStrip
+                fileType={fileType}
+                onCreate={createFile}
+                isCreating={isCreating}
+              />
+            ) : (
+              <BoardCreateStrip onCreate={createFile} isCreating={isCreating} />
+            )}
             <BoardGrid
               result={result}
               files={filteredResult.data ?? []}
               actions={actions}
               title={base.t('BoardHome.list_title')}
-              limit={BOARD_HOME_LIMIT}
+              limit={HOME_LIMIT}
+              {...(home === 'office' && {
+                Card: OfficeCard,
+                cardProps: { fileType },
+                emptyLabel: base.t(`OfficeHome.no_file.${fileType}`)
+              })}
               seeAllPath={getFileTypePath(
                 fileType,
                 FILE_TYPE_SECTION_RECENT_LIST

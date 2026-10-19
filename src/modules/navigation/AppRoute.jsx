@@ -23,6 +23,7 @@ import FileTypeSharingsView from '../views/FileType/FileTypeSharingsView'
 import FileTypeTrashView from '../views/FileType/FileTypeTrashView'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
+  FILE_TYPE_SECTION_RECENT_LIST,
   getFileTypePage
 } from '../views/FileType/helpers'
 import OnlyOfficePaywallView from '../views/OnlyOffice/OnlyOfficePaywallView'
@@ -126,13 +127,14 @@ const FileTypeLayout = () => {
   )
 }
 
-// Recent and Created by me of a file type page share their routes. Recent is
-// the page itself, so it has no path of its own.
+// The page itself, its Recent list and Created by me share their routes. The
+// page has no path of its own: it is the home of the board page, and Recent
+// on the others.
 const fileTypeListRoute = (path, createdByMe = false) => (
   <Route
-    key={path ?? 'recent'}
+    key={path ?? 'home'}
     path={path}
-    element={<FileTypeView createdByMe={createdByMe} />}
+    element={<FileTypeView createdByMe={createdByMe} isHome={!path} />}
   >
     {path ? null : <Route index element={null} />}
     <Route
@@ -307,6 +309,7 @@ const AppRoutes = ({ sharedDrivesEnabled }) => (
 
     <Route path="type/:fileType" element={<FileTypeLayout />}>
       {fileTypeListRoute()}
+      {fileTypeListRoute(FILE_TYPE_SECTION_RECENT_LIST)}
       {fileTypeListRoute(FILE_TYPE_SECTION_CREATED_BY_ME, true)}
       <Route path="sharings" element={<Navigate to="with-me" replace />} />
       <Route path="sharings/:tab" element={<FileTypeSharingsView />}>

@@ -38,6 +38,7 @@ describe('getFileTypeSectionFromPath', () => {
   it.each([
     ['/type/text', ''],
     ['/type/text/file/123', ''],
+    ['/type/excalidraw/recent', 'recent'],
     ['/type/sheet/created-by-me', 'created-by-me'],
     ['/type/slide/sharings/with-me', 'sharings'],
     ['/type/excalidraw/trash/destroy', 'trash'],

@@ -27,8 +27,9 @@ import { canWriteOfficeDocument } from '@/modules/views/OnlyOffice/helpers'
 //   Personalize folder action does, so it looks like its app
 // - defaultViewType, viewTypeSetting: list or grid view shown until one is
 //   picked, and the settings attribute the pick of these pages is saved in
-// - withBoardHome: whether the grid view is the board home, with templates
-//   and drawing tiles (see Board/), instead of the Drive grid
+// - withBoardHome: whether the page opens on the board home, with templates
+//   and the latest drawings as tiles (see Board/), its recent files moving
+//   to a section of their own
 export const FILE_TYPE_PAGES = {
   text: {
     classes: ['text', 'document'],
@@ -83,6 +84,8 @@ export const getFileTypePage = fileType => FILE_TYPE_PAGES[fileType] ?? null
 
 // Sections of a file type page, as the Drive ones but for files of the type.
 export const FILE_TYPE_SECTION_RECENT = ''
+// Recent files of a page that opens on its home (withBoardHome)
+export const FILE_TYPE_SECTION_RECENT_LIST = 'recent'
 export const FILE_TYPE_SECTION_CREATED_BY_ME = 'created-by-me'
 export const FILE_TYPE_SECTION_SHARINGS = 'sharings'
 export const FILE_TYPE_SECTION_TRASH = 'trash'
@@ -100,6 +103,7 @@ export const getFileTypeSectionFromPath = pathname => {
   if (!match) return null
   const section = match[1]
   return [
+    FILE_TYPE_SECTION_RECENT_LIST,
     FILE_TYPE_SECTION_CREATED_BY_ME,
     FILE_TYPE_SECTION_SHARINGS,
     FILE_TYPE_SECTION_TRASH

@@ -2,6 +2,7 @@ import {
   Icon,
   ClockOutline,
   FromUser,
+  Home,
   Plus,
   ShareExternal,
   Trash
@@ -15,8 +16,10 @@ import { useI18n } from 'twake-i18n'
 import { getFileTypeSharingsPath } from './FileTypeSharingsView'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
+  FILE_TYPE_SECTION_RECENT_LIST,
   FILE_TYPE_SECTION_SHARINGS,
   FILE_TYPE_SECTION_TRASH,
+  getFileTypePage,
   getFileTypePath
 } from './helpers'
 import { useCreateFileTypeFile } from './useCreateFileTypeFile'
@@ -25,6 +28,7 @@ import { useNavContext } from '@/modules/navigation/NavContext'
 import { NavItem } from '@/modules/navigation/NavItem'
 
 const SECTIONS = [
+  FILE_TYPE_SECTION_RECENT_LIST,
   FILE_TYPE_SECTION_CREATED_BY_ME,
   FILE_TYPE_SECTION_SHARINGS,
   FILE_TYPE_SECTION_TRASH
@@ -57,21 +61,41 @@ export const FileTypeCreateButton = ({ fileType, page }) => {
   )
 }
 
+const isOnPage = (pathname, fileType) =>
+  isInSection(pathname, fileType) &&
+  !SECTIONS.some(section => isInSection(pathname, fileType, section))
+
 /**
- * Sidebar of a file type page: the Drive sections, for files of the type.
+ * Sidebar of a file type page: the Drive sections, for files of the type. A
+ * page with a home opens on it, its recent files coming right after.
  */
 export const FileTypeNav = ({ fileType }) => {
+  const { t } = useI18n()
   const clickState = useNavContext()
+  const hasHome = Boolean(getFileTypePage(fileType)?.withBoardHome)
 
   return (
     <UINav>
+      {hasHome && (
+        <NavItem
+          to={getFileTypePath(fileType)}
+          icon={<Icon icon={Home} />}
+          forcedLabel={t(`FileTypeView.title_home.${fileType}`)}
+          isActive={pathname => isOnPage(pathname, fileType)}
+          clickState={clickState}
+        />
+      )}
       <NavItem
-        to={getFileTypePath(fileType)}
+        to={getFileTypePath(
+          fileType,
+          hasHome ? FILE_TYPE_SECTION_RECENT_LIST : undefined
+        )}
         icon={<Icon icon={ClockOutline} />}
         label="recent"
         isActive={pathname =>
-          isInSection(pathname, fileType) &&
-          !SECTIONS.some(section => isInSection(pathname, fileType, section))
+          hasHome
+            ? isInSection(pathname, fileType, FILE_TYPE_SECTION_RECENT_LIST)
+            : isOnPage(pathname, fileType)
         }
         clickState={clickState}
       />

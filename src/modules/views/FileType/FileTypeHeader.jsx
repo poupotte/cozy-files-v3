@@ -24,6 +24,8 @@ import ViewSwitcher from '@/modules/drive/Toolbar/components/ViewSwitcher'
  * @param {boolean} props.isMobile - Current breakpoint
  * @param {React.ReactNode} [props.tabs] - Tabs shown next to the title on desktop
  * @param {boolean} [props.canCreate=true] - Whether to offer the Create button
+ * @param {boolean} [props.withViewSwitcher=true] - Whether to offer the
+ *   list/grid switch
  */
 export const FileTypeHeader = ({
   title,
@@ -31,7 +33,8 @@ export const FileTypeHeader = ({
   page,
   isMobile,
   tabs,
-  canCreate = true
+  canCreate = true,
+  withViewSwitcher = true
 }) => {
   const { t } = useI18n()
   const { createFile, isCreating } = useCreateFileTypeFile(fileType, page)
@@ -45,7 +48,7 @@ export const FileTypeHeader = ({
       </div>
       {!isMobile && tabs}
       <div className="u-flex u-flex-items-center u-ml-auto">
-        {!isMobile && <ViewSwitcher />}
+        {!isMobile && withViewSwitcher && <ViewSwitcher />}
         {isMobile && canCreate && (
           <Button
             variant="primary"

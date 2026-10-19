@@ -911,6 +911,7 @@
     }
   },
   "BoardHome": {
+    "see_all": "See all",
     "create_title": "Create a board",
     "blank": "Blank board",
     "list_title": "Recently modified",

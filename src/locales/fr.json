@@ -911,6 +911,7 @@
     }
   },
   "BoardHome": {
+    "see_all": "Tout voir",
     "create_title": "Créer un tableau",
     "blank": "Tableau vide",
     "list_title": "Modifiés récemment",

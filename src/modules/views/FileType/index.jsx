@@ -19,6 +19,7 @@ import { FileTypeListProvider } from './FileTypeList'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
   FILE_TYPE_SECTION_RECENT,
+  FILE_TYPE_SECTION_RECENT_LIST,
   getFileTypePage,
   getFileTypePath
 } from './helpers'
@@ -33,7 +34,6 @@ import useHead from '@/components/useHead'
 import { RECENT_FOLDER_ID } from '@/constants/config'
 import { useFolderSort } from '@/hooks'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
-import { useViewSwitcherContext } from '@/lib/ViewSwitcherContext'
 import {
   download,
   trash,
@@ -51,15 +51,17 @@ import { removeFromFavorites } from '@/modules/actions/components/removeFromFavo
 import { useFolderViewBase } from '@/modules/views/Folder/hooks/useFolderViewBase'
 import { useCreatedByMe } from '@/modules/views/Recent/createdByMe'
 
-const FileTypeViewContent = ({ fileType, page, createdByMe }) => {
+// Latest boards shown on the board home, the others are in Recent
+const BOARD_HOME_LIMIT = 8
+
+const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
   const base = useFolderViewBase()
   const sharingContext = useSharingContext()
   const { allLoaded, refresh, isOwner, byDocId } = sharingContext
   const nativeSharing = useNativeFileSharing()
-  // The grid view of a board page is the board home: its templates and the
+  // A board page opens on the board home: its templates and the latest
   // drawings as tiles, never the welcome page.
-  const { viewType } = useViewSwitcherContext()
-  const isBoardHome = Boolean(page.withBoardHome) && viewType === 'grid'
+  const isBoardHome = Boolean(page.withBoardHome) && isHome
   const titleKey = createdByMe
     ? 'title_created_by_me'
     : isBoardHome
@@ -76,9 +78,12 @@ const FileTypeViewContent = ({ fileType, page, createdByMe }) => {
     page
   })
   const filteredResult = useCreatedByMe(typedResult, createdByMe)
+  const recentSection = isHome
+    ? FILE_TYPE_SECTION_RECENT
+    : FILE_TYPE_SECTION_RECENT_LIST
   const basePath = getFileTypePath(
     fileType,
-    createdByMe ? FILE_TYPE_SECTION_CREATED_BY_ME : FILE_TYPE_SECTION_RECENT
+    createdByMe ? FILE_TYPE_SECTION_CREATED_BY_ME : recentSection
   )
 
   // Without any file of the type, show a welcome page instead of an empty
@@ -147,18 +152,22 @@ const FileTypeViewContent = ({ fileType, page, createdByMe }) => {
             fileType={fileType}
             page={page}
             isMobile={base.isMobile}
+            withViewSwitcher={!isBoardHome}
           />
         )}
         {isBoardHome ? (
           <div className={boardStyles['boardHome']}>
-            {!createdByMe && (
-              <BoardCreateStrip onCreate={createFile} isCreating={isCreating} />
-            )}
+            <BoardCreateStrip onCreate={createFile} isCreating={isCreating} />
             <BoardGrid
               result={result}
               files={filteredResult.data ?? []}
               actions={actions}
-              title={createdByMe ? null : base.t('BoardHome.list_title')}
+              title={base.t('BoardHome.list_title')}
+              limit={BOARD_HOME_LIMIT}
+              seeAllPath={getFileTypePath(
+                fileType,
+                FILE_TYPE_SECTION_RECENT_LIST
+              )}
             />
           </div>
         ) : (
@@ -209,8 +218,10 @@ const FileTypeViewContent = ({ fileType, page, createdByMe }) => {
  *
  * @param {object} props - Component props
  * @param {boolean} [props.createdByMe=false] - Whether to keep my files only
+ * @param {boolean} [props.isHome=false] - Whether this is the page itself,
+ *   the board home of a board page
  */
-export const FileTypeView = ({ createdByMe = false }) => {
+export const FileTypeView = ({ createdByMe = false, isHome = false }) => {
   const { fileType } = useParams()
   const page = getFileTypePage(fileType)
 
@@ -221,6 +232,7 @@ export const FileTypeView = ({ createdByMe = false }) => {
       fileType={fileType}
       page={page}
       createdByMe={createdByMe}
+      isHome={isHome}
     />
   )
 }

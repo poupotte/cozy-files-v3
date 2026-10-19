@@ -1103,6 +1103,14 @@
       }
     }
   },
+  "UserTemplates": {
+    "folder": "Templates",
+    "save": "Save as template",
+    "saved": "%{name} is now a template: find it when you create a file.",
+    "save_error": "The template could not be saved.",
+    "remove": "Remove the template %{name}",
+    "remove_error": "The template could not be removed."
+  },
   "BoardHome": {
     "see_all": "See all",
     "create_title": "Create a board",

@@ -22,8 +22,15 @@ import boardStyles from '../Board/board.styl'
  * @param {Function} props.onCreate - Creates a file, from a template id or
  *   from nothing
  * @param {boolean} props.isCreating - Whether a file is being created
+ * @param {React.ReactNode} [props.userTemplates] - Tiles of the templates the
+ *   user saved, shown after the others
  */
-export const OfficeCreateStrip = ({ fileType, onCreate, isCreating }) => {
+export const OfficeCreateStrip = ({
+  fileType,
+  onCreate,
+  isCreating,
+  userTemplates
+}) => {
   const { t } = useI18n()
 
   return (
@@ -75,6 +82,7 @@ export const OfficeCreateStrip = ({ fileType, onCreate, isCreating }) => {
             </button>
           </li>
         ))}
+        {userTemplates}
       </ul>
     </section>
   )

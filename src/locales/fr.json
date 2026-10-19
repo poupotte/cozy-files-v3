@@ -1103,6 +1103,14 @@
       }
     }
   },
+  "UserTemplates": {
+    "folder": "Modèles",
+    "save": "Enregistrer comme modèle",
+    "saved": "%{name} est maintenant un modèle : tu le retrouveras au moment de créer un fichier.",
+    "save_error": "Le modèle n'a pas pu être enregistré.",
+    "remove": "Retirer le modèle %{name}",
+    "remove_error": "Le modèle n'a pas pu être retiré."
+  },
   "BoardHome": {
     "see_all": "Tout voir",
     "create_title": "Créer un tableau",

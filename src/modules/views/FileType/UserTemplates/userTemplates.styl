@@ -1,0 +1,17 @@
+// The remove button of a user template only shows on hover, so the Create
+// block stays as quiet as with the templates of the page.
+.userTemplate
+    position relative
+
+    &:hover .userTemplate-remove,
+    &:focus-within .userTemplate-remove
+        opacity 1
+
+.userTemplate-remove
+    position absolute !important
+    top .25rem
+    right .25rem
+    opacity 0
+    background-color var(--paperBackgroundColor) !important
+    box-shadow var(--shadow1)
+    transition opacity .15s

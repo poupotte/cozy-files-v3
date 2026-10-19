@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Navigate, Outlet, useParams } from 'react-router-dom'
 
 import flag from 'cozy-flags'
@@ -12,12 +12,18 @@ import { Content } from 'cozy-ui/transpiled/react/Layout'
 
 import { BoardCreateStrip } from './Board/BoardCreateStrip'
 import { BoardGrid } from './Board/BoardGrid'
+import { BoardPreview } from './Board/BoardPreview'
 import boardStyles from './Board/board.styl'
 import { FileTypeEmpty } from './FileTypeEmpty'
 import { FileTypeHeader } from './FileTypeHeader'
 import { FileTypeListProvider } from './FileTypeList'
 import { OfficeCard } from './Office/OfficeCard'
 import { OfficeCreateStrip } from './Office/OfficeCreateStrip'
+import { OfficePreview } from './Office/OfficePreview'
+import { UserTemplateTiles } from './UserTemplates/UserTemplateTiles'
+import { saveAsTemplate } from './UserTemplates/saveAsTemplate'
+import { useUserTemplates } from './UserTemplates/useUserTemplates'
+import { isUserTemplate } from './UserTemplates/userTemplates'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
   FILE_TYPE_SECTION_RECENT,
@@ -36,6 +42,7 @@ import useHead from '@/components/useHead'
 import { RECENT_FOLDER_ID } from '@/constants/config'
 import { useFolderSort } from '@/hooks'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import logger from '@/lib/logger'
 import {
   download,
   trash,
@@ -76,10 +83,21 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
   const [sortOrder, setSortOrder, isSettingsLoaded] =
     useFolderSort(RECENT_FOLDER_ID)
 
-  const { result, filteredResult: typedResult } = useFileTypeFiles({
+  const { result, filteredResult: typedFiles } = useFileTypeFiles({
     fileType,
     page
   })
+  // The templates the user saved are offered by the Create block, not listed.
+  const typedResult = useMemo(
+    () => ({
+      ...typedFiles,
+      data: (typedFiles.data ?? []).filter(
+        file => !isUserTemplate(file, fileType)
+      )
+    }),
+    [typedFiles, fileType]
+  )
+  const userTemplates = useUserTemplates(fileType)
   const filteredResult = useCreatedByMe(typedResult, createdByMe)
   const recentSection = isHome
     ? FILE_TYPE_SECTION_RECENT
@@ -99,7 +117,37 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
   // load so the header does not flash before it.
   const isFirstLoad = !result.lastFetch
   const showHeader = !hasNoFile && !isFirstLoad
-  const { createFile, isCreating } = useCreateFileTypeFile(fileType, page)
+  const { createFile, createFromTemplateFile, isCreating } =
+    useCreateFileTypeFile(fileType, page)
+
+  const removeUserTemplate = async template => {
+    try {
+      await base.client.collection('io.cozy.files').destroy(template)
+    } catch (error) {
+      logger.error('Could not remove the user template', error)
+      base.showAlert({
+        message: base.t('UserTemplates.remove_error'),
+        severity: 'error'
+      })
+    }
+    userTemplates.refresh()
+  }
+
+  const userTemplateTiles = (
+    <UserTemplateTiles
+      templates={userTemplates.templates}
+      renderPreview={template =>
+        home === 'office' ? (
+          <OfficePreview file={template} shape={fileType} />
+        ) : (
+          <BoardPreview file={template} />
+        )
+      }
+      onCreate={createFromTemplateFile}
+      onRemove={removeUserTemplate}
+      isCreating={isCreating}
+    />
+  )
 
   useKeyboardShortcuts({
     client: base.client,
@@ -121,7 +169,10 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
     allLoaded,
     isOwner,
     byDocId,
-    selectAll: () => base.toggleSelectAllItems(filteredResult?.data || [])
+    selectAll: () => base.toggleSelectAllItems(filteredResult?.data || []),
+    fileType,
+    page,
+    onSaved: userTemplates.refresh
   }
 
   const actions = makeActions(
@@ -141,6 +192,7 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
       hr,
       versions,
       hr,
+      ...(page.home ? [saveAsTemplate, hr] : []),
       trash
     ],
     actionsOptions
@@ -165,9 +217,14 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
                 fileType={fileType}
                 onCreate={createFile}
                 isCreating={isCreating}
+                userTemplates={userTemplateTiles}
               />
             ) : (
-              <BoardCreateStrip onCreate={createFile} isCreating={isCreating} />
+              <BoardCreateStrip
+                onCreate={createFile}
+                isCreating={isCreating}
+                userTemplates={userTemplateTiles}
+              />
             )}
             <BoardGrid
               result={result}

@@ -46,8 +46,10 @@ const useTemplateElements = () => {
  * @param {Function} props.onCreate - Creates a board, from a template id or
  *   from nothing
  * @param {boolean} props.isCreating - Whether a board is being created
+ * @param {React.ReactNode} [props.userTemplates] - Tiles of the templates the
+ *   user saved, shown after the others
  */
-export const BoardCreateStrip = ({ onCreate, isCreating }) => {
+export const BoardCreateStrip = ({ onCreate, isCreating, userTemplates }) => {
   const { t } = useI18n()
   const elementsById = useTemplateElements()
 
@@ -93,6 +95,7 @@ export const BoardCreateStrip = ({ onCreate, isCreating }) => {
             </button>
           </li>
         ))}
+        {userTemplates}
       </ul>
     </section>
   )

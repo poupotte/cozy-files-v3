@@ -59,7 +59,13 @@ const handleContextMenu = ev => {
   ev.preventDefault()
 }
 
-const LayoutContent = ({ withSidebar, appIcon, appTextIcon }) => {
+const LayoutContent = ({
+  withSidebar,
+  appIcon,
+  appTextIcon,
+  sidebarActions,
+  nav
+}) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { isMobile, isDesktop } = useBreakpoints()
@@ -103,7 +109,9 @@ const LayoutContent = ({ withSidebar, appIcon, appTextIcon }) => {
         {withSidebar && (
           <Sidebar className="u-flex-justify-between">
             <div>
-              {isDesktop && isNoFolderSection ? (
+              {sidebarActions ? (
+                isDesktop && sidebarActions
+              ) : isDesktop && isNoFolderSection ? (
                 <div className="u-mh-1 u-mt-half">
                   <AddMenuProvider
                     canCreateFolder={true}
@@ -155,7 +163,7 @@ const LayoutContent = ({ withSidebar, appIcon, appTextIcon }) => {
                   />
                 </div>
               ) : null}
-              <Nav />
+              {nav ?? <Nav />}
             </div>
             {isDesktop && (
               <div>
@@ -184,13 +192,23 @@ const LayoutContent = ({ withSidebar, appIcon, appTextIcon }) => {
 
 // withSidebar=false and the bar icons are for standalone pages opened from
 // outside Drive (e.g. the Home entrypoints), not reachable from the navigation.
-const Layout = ({ withSidebar = true, appIcon, appTextIcon }) => {
+// sidebarActions and nav replace the Drive add buttons and navigation, for
+// pages with their own sections (e.g. the file type pages).
+const Layout = ({
+  withSidebar = true,
+  appIcon,
+  appTextIcon,
+  sidebarActions,
+  nav
+}) => {
   return (
     <NavProvider>
       <LayoutContent
         withSidebar={withSidebar}
         appIcon={appIcon}
         appTextIcon={appTextIcon}
+        sidebarActions={sidebarActions}
+        nav={nav}
       />
     </NavProvider>
   )

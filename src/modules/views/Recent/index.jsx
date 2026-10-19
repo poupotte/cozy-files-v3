@@ -11,6 +11,7 @@ import { makeActions } from 'cozy-ui/transpiled/react/ActionsMenu/Actions'
 import { Content } from 'cozy-ui/transpiled/react/Layout'
 import LinearProgress from 'cozy-ui/transpiled/react/LinearProgress'
 
+import { useCreatedByMe } from './createdByMe'
 import { useFilteredRecents } from './useFilteredRecents'
 import { useRecentFilters } from './useRecentFilters'
 import FolderView from '../Folder/FolderView'
@@ -44,22 +45,31 @@ import FabWithAddMenuContext from '@/modules/drive/FabWithAddMenuContext'
 import Toolbar from '@/modules/drive/Toolbar'
 import { useFolderViewBase } from '@/modules/views/Folder/hooks/useFolderViewBase'
 
-export const RecentView = () => {
+/**
+ * Recent files, or the ones I created among them.
+ *
+ * @param {object} props - Component props
+ * @param {boolean} [props.createdByMe=false] - Whether to keep my files only
+ */
+export const RecentView = ({ createdByMe = false }) => {
   const base = useFolderViewBase()
   const sharingContext = useSharingContext()
   const { allLoaded, refresh, isOwner, byDocId } = sharingContext
   const nativeSharing = useNativeFileSharing()
-  useHead({ title: base.t('breadcrumb.title_recent') })
+  const title = base.t(
+    createdByMe ? 'breadcrumb.title_created_by_me' : 'breadcrumb.title_recent'
+  )
+  useHead({ title })
   const [sortOrder, setSortOrder, isSettingsLoaded] =
     useFolderSort(RECENT_FOLDER_ID)
 
   const unfilteredRecentsResult = useRecentFiles()
   const recentFilters = useRecentFilters()
-  const { contactFilterOptions, filteredResult: recentsResult } =
-    useFilteredRecents({
-      result: unfilteredRecentsResult,
-      filters: recentFilters.filters
-    })
+  const { contactFilterOptions, filteredResult } = useFilteredRecents({
+    result: unfilteredRecentsResult,
+    filters: recentFilters.filters
+  })
+  const recentsResult = useCreatedByMe(filteredResult, createdByMe)
 
   // Shared-drive and federated files arrive from the dataproxy seconds after
   // the local files; surface that background fetch once a list is on screen.
@@ -116,7 +126,7 @@ export const RecentView = () => {
     <FolderView>
       <Content className={base.isMobile ? '' : 'u-pt-1'}>
         <FolderViewHeader>
-          <Breadcrumb path={[{ name: base.t('breadcrumb.title_recent') }]} />
+          <Breadcrumb path={[{ name: title }]} />
           <Toolbar canUpload={false} canCreateFolder={false} />
         </FolderViewHeader>
         {!base.isMobile && (

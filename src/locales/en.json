@@ -1,6 +1,7 @@
 {
   "Nav": {
     "item_drive": "My Drive",
+    "item_created_by_me": "Created by me",
     "item_recent": "Recents",
     "item_sharings": "Sharings",
     "item_shared": "Shared by me",
@@ -30,6 +31,7 @@
   },
   "breadcrumb": {
     "title_drive": "Files",
+    "title_created_by_me": "Created by me",
     "title_recent": "Recent",
     "title_sharings": "Sharings",
     "title_shared": "Shared by me",
@@ -313,6 +315,8 @@
     "title": "You don’t have any files in this folder.",
     "text": "Select files on your computer or drag them here.",
     "mobile_text": "Select files on your device.",
+    "file_type_title": "No file here yet.",
+    "file_type_text": "Use the Create button to make one.",
     "trash_title": "You don’t have any deleted files.",
     "trash_text": "Move files you don't need anymore to the Trash and permanently delete items to free up storage page.",
     "sharing_text": "You don’t have any shared files or drives yet."
@@ -872,6 +876,12 @@
     }
   },
   "FileTypeView": {
+    "title_created_by_me": {
+      "text": "Documents created by me",
+      "sheet": "Spreadsheets created by me",
+      "slide": "Presentations created by me",
+      "excalidraw": "Boards created by me"
+    },
     "title": {
       "text": "Latest documents",
       "sheet": "Latest spreadsheets",

@@ -1,4 +1,11 @@
-import { Icon, ClockOutline, Cloud2, Star, Trash } from '@linagora/twake-icons'
+import {
+  Icon,
+  ClockOutline,
+  Cloud2,
+  FromUser,
+  Star,
+  Trash
+} from '@linagora/twake-icons'
 import React from 'react'
 
 import flag from 'cozy-flags'
@@ -8,6 +15,7 @@ import useBreakpoints from 'cozy-ui/transpiled/react/providers/Breakpoints'
 import { useI18n } from 'twake-i18n'
 
 import NextcloudIcon from '@/assets/icons/icon-nextcloud.svg'
+import { CREATED_BY_ME_ROUTE } from '@/constants/config'
 import { ExternalNavItem } from '@/modules/navigation/ExternalNavItem'
 import { FavoriteList } from '@/modules/navigation/FavoriteList'
 import { useNavContext } from '@/modules/navigation/NavContext'
@@ -44,6 +52,13 @@ export const Nav = () => {
         icon={<Icon icon={ClockOutline} />}
         label="recent"
         rx={/\/recent(\/.*)?/}
+        clickState={clickState}
+      />
+      <NavItem
+        to={`/${CREATED_BY_ME_ROUTE}`}
+        icon={<Icon icon={FromUser} />}
+        label="created_by_me"
+        rx={new RegExp(`^/${CREATED_BY_ME_ROUTE}(/.*)?$`)}
         clickState={clickState}
       />
       <SharingsNavItem clickState={clickState} />

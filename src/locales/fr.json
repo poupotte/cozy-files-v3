@@ -1,6 +1,7 @@
 {
   "Nav": {
     "item_drive": "Mon Drive",
+    "item_created_by_me": "Créés par moi",
     "item_recent": "Récents",
     "item_sharings": "Partages",
     "item_shared": "Partagés",
@@ -30,6 +31,7 @@
   },
   "breadcrumb": {
     "title_drive": "Fichiers",
+    "title_created_by_me": "Créés par moi",
     "title_recent": "Récents",
     "title_sharings": "Partages",
     "title_shared": "Mes fichiers partagés",
@@ -313,6 +315,8 @@
     "title": "Vous n'avez aucun fichier dans ce dossier.",
     "text": "Sélectionnez les fichiers sur votre ordinateur ou faites-les glisser ici.",
     "mobile_text": "Sélectionnez les fichiers sur votre appareil.",
+    "file_type_title": "Aucun fichier ici pour l’instant.",
+    "file_type_text": "Utilisez le bouton Créer pour en faire un.",
     "trash_title": "Vous n'avez aucun fichier supprimé.",
     "trash_text": "Déplacez les fichiers dont vous n'avez plus besoin dans la corbeille et supprimez-les définitivement pour récupérer de l'espace de stockage.",
     "sharing_text": "Vous n’avez aucun fichier ni drive partagé pour le moment."
@@ -872,6 +876,12 @@
     }
   },
   "FileTypeView": {
+    "title_created_by_me": {
+      "text": "Documents créés par moi",
+      "sheet": "Feuilles de calcul créées par moi",
+      "slide": "Présentations créées par moi",
+      "excalidraw": "Boards créés par moi"
+    },
     "title": {
       "text": "Derniers documents",
       "sheet": "Dernières feuilles de calcul",

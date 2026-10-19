@@ -14,8 +14,17 @@ import FilesViewerDrive from '../views/Drive/FilesViewerDrive'
 import { getExcalidrawRoutes } from '../views/Excalidraw/routes'
 import { FilePickerDemoView } from '../views/FilePickerDemo/FilePickerDemoView'
 import FileTypeView from '../views/FileType'
-import FilesViewerFileType from '../views/FileType/FilesViewerFileType'
-import { getFileTypePage } from '../views/FileType/helpers'
+import { FilesViewerFileTypeList } from '../views/FileType/FileTypeList'
+import {
+  FileTypeCreateButton,
+  FileTypeNav
+} from '../views/FileType/FileTypeNav'
+import FileTypeSharingsView from '../views/FileType/FileTypeSharingsView'
+import FileTypeTrashView from '../views/FileType/FileTypeTrashView'
+import {
+  FILE_TYPE_SECTION_CREATED_BY_ME,
+  getFileTypePage
+} from '../views/FileType/helpers'
 import OnlyOfficePaywallView from '../views/OnlyOffice/OnlyOfficePaywallView'
 import { getOnlyOfficeRoutes } from '../views/OnlyOffice/routes'
 import { getPdfRoutes } from '../views/Pdf/routes'
@@ -31,12 +40,14 @@ import TrashFolderView from '../views/Trash/TrashFolderView'
 
 import FileHistory from '@/components/FileHistory'
 import {
+  CREATED_BY_ME_ROUTE,
   ROOT_DIR_ID,
   SHARING_TAB_BY_ME,
   SHARING_TAB_DRIVES,
   SHARING_TAB_WITH_ME,
   TRASH_DIR_ID
 } from '@/constants/config'
+import { ViewSwitcherContextProvider } from '@/lib/ViewSwitcherContext'
 import { SentryRoutes } from '@/lib/sentry'
 import { UploaderComponent } from '@/modules//views/Upload/UploaderComponent'
 import Layout from '@/modules/layout/Layout'
@@ -83,19 +94,92 @@ const FilesRedirect = () => {
   return <Navigate to={`/folder/${folderId}`} replace={true} />
 }
 
-// File type pages are opened from the Home entrypoints: no Drive navigation,
-// and the bar shows the entrypoint instead of Drive.
+// File type pages are opened from the Home entrypoints: the Drive sections
+// for files of the type only, and the bar shows the entrypoint instead of
+// Drive. A type may show the grid view by default and remember its own pick.
 const FileTypeLayout = () => {
   const { fileType } = useParams()
   const page = getFileTypePage(fileType)
-  return (
+
+  if (!page) return <Navigate to="/recent" replace={true} />
+
+  const layout = (
     <Layout
-      withSidebar={false}
-      appIcon={page?.appIcon}
-      appTextIcon={page?.appTextIcon}
+      appIcon={page.appIcon}
+      appTextIcon={page.appTextIcon}
+      sidebarActions={<FileTypeCreateButton fileType={fileType} page={page} />}
+      nav={<FileTypeNav fileType={fileType} />}
     />
   )
+
+  return page.viewTypeSetting ? (
+    <ViewSwitcherContextProvider
+      key={fileType}
+      settingKey={page.viewTypeSetting}
+      defaultViewType={page.defaultViewType}
+    >
+      {layout}
+    </ViewSwitcherContextProvider>
+  ) : (
+    layout
+  )
 }
+
+// Recent and Created by me of a file type page share their routes. Recent is
+// the page itself, so it has no path of its own.
+const fileTypeListRoute = (path, createdByMe = false) => (
+  <Route
+    key={path ?? 'recent'}
+    path={path}
+    element={<FileTypeView createdByMe={createdByMe} />}
+  >
+    {path ? null : <Route index element={null} />}
+    <Route
+      path="file/:fileId"
+      element={<OutletWrapper Component={FilesViewerFileTypeList} />}
+    >
+      <Route path="v/revision" element={<FileHistory />} />
+      <Route path="v/share" element={<ShareFileView />} />
+      <Route path="v/move" element={<MoveFilesView isOpenInViewer />} />
+      <Route path="v/duplicate" element={<FolderDuplicateView />} />
+    </Route>
+    <Route path="file/:fileId/revision" element={<FileHistory />} />
+    <Route path="file/:fileId/share" element={<ShareFileView />} />
+    <Route path="file/:fileId/qualify" element={<QualifyFileView />} />
+    <Route path="share" element={<ShareDisplayedFolderView />} />
+    <Route path="move" element={<MoveFilesView />} />
+  </Route>
+)
+
+const FilesViewerCreatedByMe = () => <FilesViewerRecent createdByMe />
+
+// Recent and Created by me of Drive share their routes.
+const recentRoute = (path, createdByMe = false) => (
+  <Route
+    key={path}
+    path={path}
+    element={<RecentView createdByMe={createdByMe} />}
+  >
+    <Route
+      path="file/:fileId"
+      element={
+        <OutletWrapper
+          Component={createdByMe ? FilesViewerCreatedByMe : FilesViewerRecent}
+        />
+      }
+    >
+      <Route path="v/revision" element={<FileHistory />} />
+      <Route path="v/share" element={<ShareFileView />} />
+      <Route path="v/move" element={<MoveFilesView isOpenInViewer />} />
+      <Route path="v/duplicate" element={<FolderDuplicateView />} />
+    </Route>
+    <Route path="file/:fileId/revision" element={<FileHistory />} />
+    <Route path="file/:fileId/share" element={<ShareFileView />} />
+    <Route path="file/:fileId/qualify" element={<QualifyFileView />} />
+    <Route path="share" element={<ShareDisplayedFolderView />} />
+    <Route path="move" element={<MoveFilesView />} />
+  </Route>
+)
 
 const OutletWrapper = ({ Component }) => (
   <>
@@ -220,11 +304,14 @@ const AppRoutes = ({ sharedDrivesEnabled }) => (
       <Route path={ASSISTANT_ROUTE_PATH} element={<AssistantView />} />
     </Route>
 
-    <Route element={<FileTypeLayout />}>
-      <Route path="type/:fileType" element={<FileTypeView />}>
+    <Route path="type/:fileType" element={<FileTypeLayout />}>
+      {fileTypeListRoute()}
+      {fileTypeListRoute(FILE_TYPE_SECTION_CREATED_BY_ME, true)}
+      <Route path="sharings" element={<Navigate to="with-me" replace />} />
+      <Route path="sharings/:tab" element={<FileTypeSharingsView />}>
         <Route
           path="file/:fileId"
-          element={<OutletWrapper Component={FilesViewerFileType} />}
+          element={<OutletWrapper Component={FilesViewerFileTypeList} />}
         >
           <Route path="v/revision" element={<FileHistory />} />
           <Route path="v/share" element={<ShareFileView />} />
@@ -234,8 +321,12 @@ const AppRoutes = ({ sharedDrivesEnabled }) => (
         <Route path="file/:fileId/revision" element={<FileHistory />} />
         <Route path="file/:fileId/share" element={<ShareFileView />} />
         <Route path="file/:fileId/qualify" element={<QualifyFileView />} />
-        <Route path="share" element={<ShareDisplayedFolderView />} />
         <Route path="move" element={<MoveFilesView />} />
+      </Route>
+      <Route path="trash" element={<FileTypeTrashView />}>
+        <Route path="file/:fileId" element={<FilesViewerFileTypeList />} />
+        <Route path="file/:fileId/revision" element={<FileHistory />} />
+        <Route path="destroy" element={<TrashDestroyView />} />
       </Route>
     </Route>
 
@@ -293,22 +384,8 @@ const AppRoutes = ({ sharedDrivesEnabled }) => (
 
       {sharedDrivesEnabled ? sharedDriveRoutes() : null}
 
-      <Route path="recent" element={<RecentView />}>
-        <Route
-          path="file/:fileId"
-          element={<OutletWrapper Component={FilesViewerRecent} />}
-        >
-          <Route path="v/revision" element={<FileHistory />} />
-          <Route path="v/share" element={<ShareFileView />} />
-          <Route path="v/move" element={<MoveFilesView isOpenInViewer />} />
-          <Route path="v/duplicate" element={<FolderDuplicateView />} />
-        </Route>
-        <Route path="file/:fileId/revision" element={<FileHistory />} />
-        <Route path="file/:fileId/share" element={<ShareFileView />} />
-        <Route path="file/:fileId/qualify" element={<QualifyFileView />} />
-        <Route path="share" element={<ShareDisplayedFolderView />} />
-        <Route path="move" element={<MoveFilesView />} />
-      </Route>
+      {recentRoute('recent')}
+      {recentRoute(CREATED_BY_ME_ROUTE, true)}
 
       <Route
         path="trash"

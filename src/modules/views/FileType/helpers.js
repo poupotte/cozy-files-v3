@@ -25,6 +25,8 @@ import { canWriteOfficeDocument } from '@/modules/views/OnlyOffice/helpers'
 // - folderName: default path of the folder new files are created in
 // - folderDecorations: color and icon the folder is customized with, as the
 //   Personalize folder action does, so it looks like its app
+// - defaultViewType, viewTypeSetting: list or grid view shown until one is
+//   picked, and the settings attribute the pick of these pages is saved in
 export const FILE_TYPE_PAGES = {
   text: {
     classes: ['text', 'document'],
@@ -68,10 +70,37 @@ export const FILE_TYPE_PAGES = {
     appTextIcon: BoardAppText,
     appName: 'Twake Board',
     folderName: 'Board',
-    folderDecorations: { color: '#6965DB', icon: 'Pen', icon_color: '#FFFFFF' }
+    folderDecorations: { color: '#6965DB', icon: 'Pen', icon_color: '#FFFFFF' },
+    defaultViewType: 'grid',
+    viewTypeSetting: 'preferredBoardViewType'
   }
 }
 
 export const getFileTypePage = fileType => FILE_TYPE_PAGES[fileType] ?? null
 
-export const getFileTypePath = fileType => `/type/${fileType}`
+// Sections of a file type page, as the Drive ones but for files of the type.
+export const FILE_TYPE_SECTION_RECENT = ''
+export const FILE_TYPE_SECTION_CREATED_BY_ME = 'created-by-me'
+export const FILE_TYPE_SECTION_SHARINGS = 'sharings'
+export const FILE_TYPE_SECTION_TRASH = 'trash'
+
+export const getFileTypePath = (
+  fileType,
+  section = FILE_TYPE_SECTION_RECENT
+) => (section ? `/type/${fileType}/${section}` : `/type/${fileType}`)
+
+/**
+ * Section of the file type page a path belongs to, or null outside of them.
+ */
+export const getFileTypeSectionFromPath = pathname => {
+  const match = pathname.match(/^\/type\/[^/]+(?:\/([^/]+))?/)
+  if (!match) return null
+  const section = match[1]
+  return [
+    FILE_TYPE_SECTION_CREATED_BY_ME,
+    FILE_TYPE_SECTION_SHARINGS,
+    FILE_TYPE_SECTION_TRASH
+  ].includes(section)
+    ? section
+    : FILE_TYPE_SECTION_RECENT
+}

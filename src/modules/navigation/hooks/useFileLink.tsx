@@ -7,6 +7,7 @@ import { useSharingContext } from 'cozy-sharing'
 import useBreakpoints from 'cozy-ui/transpiled/react/providers/Breakpoints'
 
 import type { File } from '@/components/FolderPicker/types'
+import { CREATED_BY_ME_ROUTE } from '@/constants/config'
 import { joinPath } from '@/lib/path'
 import {
   computeFileType,
@@ -147,6 +148,8 @@ const useFileLink = (
   if (
     pathname.startsWith('/sharings/') ||
     (pathname.startsWith('/recent') && to.pathname.startsWith('/recent/')) ||
+    (pathname.startsWith(`/${CREATED_BY_ME_ROUTE}`) &&
+      to.pathname.startsWith(`/${CREATED_BY_ME_ROUTE}/`)) ||
     (pathname.startsWith('/type/') && to.pathname.startsWith('/type/'))
   ) {
     to = { ...to, search }

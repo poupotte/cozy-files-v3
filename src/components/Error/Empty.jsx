@@ -15,6 +15,11 @@ import { TRASH_DIR_ID } from '@/constants/config'
 import { useCurrentFolderId, useDisplayedFolder } from '@/hooks'
 import { useSharedDriveFolder } from '@/modules/shareddrives/hooks/useSharedDriveFolder'
 import { UploadButton } from '@/modules/upload/UploadButton'
+import {
+  FILE_TYPE_SECTION_SHARINGS,
+  FILE_TYPE_SECTION_TRASH,
+  getFileTypeSectionFromPath
+} from '@/modules/views/FileType/helpers'
 import { isSharingsTabRootRoute } from '@/modules/views/Sharings/routes'
 
 const EmptyCanvas = ({
@@ -90,11 +95,22 @@ export const EmptyWrapper = ({
   driveId
 }) => {
   const { pathname } = useLocation()
+  const fileTypeSection = getFileTypeSectionFromPath(pathname)
 
-  if (isSharingsTabRootRoute(pathname)) {
+  if (
+    isSharingsTabRootRoute(pathname) ||
+    fileTypeSection === FILE_TYPE_SECTION_SHARINGS
+  ) {
     return <EmptyCanvas type="sharing" driveId={driveId} />
   }
-  if (currentFolderId !== TRASH_DIR_ID) {
+  if (fileTypeSection !== null && fileTypeSection !== FILE_TYPE_SECTION_TRASH) {
+    // Files of a type are created from its Create button, not uploaded here.
+    return <EmptyCanvas type="file_type" localeKey="file_type" />
+  }
+  if (
+    currentFolderId !== TRASH_DIR_ID &&
+    fileTypeSection !== FILE_TYPE_SECTION_TRASH
+  ) {
     return (
       <EmptyDrive
         canUpload={canUpload}

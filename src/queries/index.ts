@@ -155,6 +155,35 @@ export const buildRecentByMimeQuery: QueryBuilder<string[]> = mimes => ({
   }
 })
 
+/**
+ * Most recently trashed files whose class or mime type belongs to the given
+ * ones, for the Bin of the file type pages: files only, wherever they were.
+ */
+export const buildTrashByTypeQuery: QueryBuilder<{
+  classes?: string[]
+  mimes?: string[]
+}> = ({ classes, mimes }) => ({
+  definition: () =>
+    Q('io.cozy.files')
+      .where({
+        updated_at: {
+          $gt: null
+        }
+      })
+      .partialIndex({
+        type: 'file',
+        trashed: true,
+        ...(mimes ? { mime: { $in: mimes } } : { class: { $in: classes } })
+      })
+      .indexFields(['updated_at'])
+      .sortBy([{ updated_at: 'desc' }])
+      .limitBy(50),
+  options: {
+    as: `trash-by-type-${(mimes ?? classes ?? []).join('-')}`,
+    fetchPolicy: defaultFetchPolicy
+  }
+})
+
 export const buildParentsByIdsQuery: QueryBuilder<string[]> = ids => ({
   definition: () => Q('io.cozy.files').getByIds(ids),
   options: {

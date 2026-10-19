@@ -1,4 +1,4 @@
-import { getFileTypePage } from './helpers'
+import { getFileTypePage, getFileTypeSectionFromPath } from './helpers'
 
 import { EXCALIDRAW_MIME } from '@/modules/views/Excalidraw/helpers'
 import { buildRecentByClassQuery, buildRecentByMimeQuery } from '@/queries'
@@ -31,5 +31,18 @@ describe('file type page queries', () => {
     expect(
       buildRecentByMimeQuery([EXCALIDRAW_MIME]).definition().partialFilter
     ).toMatchObject({ mime: { $in: [EXCALIDRAW_MIME] } })
+  })
+})
+
+describe('getFileTypeSectionFromPath', () => {
+  it.each([
+    ['/type/text', ''],
+    ['/type/text/file/123', ''],
+    ['/type/sheet/created-by-me', 'created-by-me'],
+    ['/type/slide/sharings/with-me', 'sharings'],
+    ['/type/excalidraw/trash/destroy', 'trash'],
+    ['/recent', null]
+  ])('finds the section of %s', (pathname, section) => {
+    expect(getFileTypeSectionFromPath(pathname)).toBe(section)
   })
 })

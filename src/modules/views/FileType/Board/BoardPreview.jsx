@@ -1,3 +1,4 @@
+import cx from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useClient } from 'cozy-client'
@@ -57,8 +58,9 @@ const renderSvg = async (scene, isDark) => {
  * @param {object} props - Component props
  * @param {object} [props.file] - The io.cozy.files board to draw
  * @param {object[]} [props.elements] - Elements to draw instead of a file
+ * @param {string} [props.className] - Extra class, to size the miniature
  */
-export const BoardPreview = ({ file, elements }) => {
+export const BoardPreview = ({ file, elements, className }) => {
   const client = useClient()
   const { type: theme } = useCozyTheme()
   const containerRef = useRef(null)
@@ -117,7 +119,7 @@ export const BoardPreview = ({ file, elements }) => {
   }, [client, elements, fileId, driveId, revision, isVisible, theme])
 
   return (
-    <div className={styles['boardPreview']} data-status={status}>
+    <div className={cx(styles['boardPreview'], className)} data-status={status}>
       <div ref={containerRef} className={styles['boardPreview-drawing']} />
     </div>
   )

@@ -229,6 +229,14 @@ column-width-thumbnail-bigger = 7rem
 .fil-file-thumbnail-image
     object-fit cover
 
+// Square like the image thumbnails of the grid (96px). Nested to win over
+// the Board page size, whatever order the styles load in.
+.fil-file-thumbnail .fil-file-thumbnail-board
+    width 6rem
+    height 6rem
+    margin 0 auto
+    border-radius 8px
+
 .fil-content-shared
     position    absolute
     bottom .8rem

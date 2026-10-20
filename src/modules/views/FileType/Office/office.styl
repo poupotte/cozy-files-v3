@@ -25,6 +25,15 @@
 .officePreview--slide
     aspect-ratio 16 / 9
 
+// The Documents page shows every kind of document in the same tile: the top
+// of a page, the top left cells of a sheet, a whole slide.
+.officePreview--document
+    aspect-ratio 4 / 3
+
+    .officePreview-slideImage
+        object-fit contain
+        background-color var(--contrastBackgroundColor)
+
 // Tiles of the files and of the templates
 button:hover > .officePreview,
 button:focus-visible > .officePreview

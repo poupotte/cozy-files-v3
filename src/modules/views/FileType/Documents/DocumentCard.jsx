@@ -12,7 +12,7 @@ import FileIconMime from '@/modules/filelist/icons/FileIconMime'
 // First page of a PDF, from the thumbnail of the stack.
 const PdfPreview = ({ file }) => (
   <div
-    className={`${officeStyles['officePreview']} ${officeStyles['officePreview--text']}`}
+    className={`${officeStyles['officePreview']} ${officeStyles['officePreview--document']}`}
     data-testid="pdf-preview"
   >
     <FileImageLoader
@@ -31,8 +31,8 @@ const PdfPreview = ({ file }) => (
 )
 
 /**
- * Tile of a document of the Documents page, shaped as its kind: a page for
- * the documents and PDF, a sheet, a slide.
+ * Tile of a document of the Documents page, of the same shape for every kind
+ * of document, showing its content as the tiles of its own page.
  *
  * @param {object} props - Component props
  * @param {object} props.file - The io.cozy.files doc
@@ -47,6 +47,7 @@ export const DocumentCard = ({ file, actions }) => {
         file={file}
         actions={actions}
         fileType="text"
+        shape="document"
         preview={<PdfPreview file={file} />}
       />
     )
@@ -56,6 +57,7 @@ export const DocumentCard = ({ file, actions }) => {
       file={file}
       actions={actions}
       fileType={['sheet', 'slide'].includes(kind) ? kind : 'text'}
+      shape="document"
     />
   )
 }

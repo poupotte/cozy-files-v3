@@ -24,8 +24,16 @@ import { useFileLink } from '@/modules/navigation/hooks/useFileLink'
  * @param {string} props.fileType - Type of the page (text, sheet or slide)
  * @param {React.ReactNode} [props.preview] - Preview shown instead of the
  *   content of the file, as the pages of a PDF
+ * @param {string} [props.shape] - Shape of the tile, the one of the type by
+ *   default
  */
-export const OfficeCard = ({ file, actions, fileType, preview }) => {
+export const OfficeCard = ({
+  file,
+  actions,
+  fileType,
+  preview,
+  shape = fileType
+}) => {
   const { t } = useI18n()
   const { openLink } = useFileLink(file)
   const anchorRef = useRef(null)
@@ -49,7 +57,7 @@ export const OfficeCard = ({ file, actions, fileType, preview }) => {
         onClick={openLink}
         aria-label={t('BoardHome.open', { name: filename })}
       >
-        {preview ?? <OfficePreview file={file} shape={fileType} />}
+        {preview ?? <OfficePreview file={file} shape={shape} />}
         <span className={boardStyles['boardCard-name']}>{filename}</span>
         {updatedAt && (
           <span className={boardStyles['boardCard-date']}>

@@ -136,15 +136,18 @@ const CONTENT_BY_KIND = {
  * @param {string} props.fileType - Type of the page (text, sheet or slide)
  * @param {object} props.preview - Preview of the template, from
  *   makeOfficeTemplatePreview
+ * @param {string} [props.shape] - Shape of the tile, the one of the type by
+ *   default
  */
-export const OfficeTemplatePreview = ({ fileType, preview }) => {
+export const OfficeTemplatePreview = ({
+  fileType,
+  preview,
+  shape = fileType
+}) => {
   const Content = CONTENT_BY_KIND[fileType]
   return (
     <div
-      className={cx(
-        styles['officePreview'],
-        styles[`officePreview--${fileType}`]
-      )}
+      className={cx(styles['officePreview'], styles[`officePreview--${shape}`])}
     >
       <Content preview={preview} />
     </div>

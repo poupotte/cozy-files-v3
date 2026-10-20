@@ -1112,7 +1112,9 @@
     "remove_error": "Le modèle n'a pas pu être retiré.",
     "new": "Nouveau modèle",
     "new_name": "Nouveau modèle",
-    "edit": "Modifier le modèle %{name}"
+    "edit": "Modifier le modèle %{name}",
+    "restore": "Rétablir le modèle masqué |||| Rétablir les %{smart_count} modèles masqués",
+    "restore_error": "Les modèles n'ont pas pu être rétablis."
   },
   "FileTypeDrop": {
     "rejected": {

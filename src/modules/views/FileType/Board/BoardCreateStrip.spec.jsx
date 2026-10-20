@@ -61,4 +61,25 @@ describe('BoardCreateStrip', () => {
     expect(screen.queryByTestId('my-kanban')).toBeInTheDocument()
     expect(screen.queryByTestId('board-template-mindmap')).toBeInTheDocument()
   })
+
+  it('leaves out the templates the user removed, and can show them again', () => {
+    const onRemoveTemplate = jest.fn()
+    const onRestoreTemplates = jest.fn()
+    render(
+      <BoardCreateStrip
+        onCreate={jest.fn()}
+        isCreating={false}
+        hiddenTemplateIds={['mindmap']}
+        onRemoveTemplate={onRemoveTemplate}
+        onRestoreTemplates={onRestoreTemplates}
+      />
+    )
+
+    expect(screen.queryByTestId('board-template-mindmap')).toBe(null)
+    fireEvent.click(screen.getByTestId('user-template-remove'))
+    fireEvent.click(screen.getByTestId('templates-restore'))
+
+    expect(onRemoveTemplate).toHaveBeenCalledWith('kanban')
+    expect(onRestoreTemplates).toHaveBeenCalled()
+  })
 })

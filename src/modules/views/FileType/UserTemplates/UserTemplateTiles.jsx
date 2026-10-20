@@ -24,21 +24,38 @@ const EditButton = ({ name, onClick }) => {
   )
 }
 
+const RemoveButton = ({ name, onClick }) => {
+  const { t } = useI18n()
+  return (
+    <IconButton
+      size="small"
+      className={styles['userTemplate-action']}
+      aria-label={t('UserTemplates.remove', { name })}
+      onClick={onClick}
+      data-testid="user-template-remove"
+    >
+      <Icon icon={CrossSmall} />
+    </IconButton>
+  )
+}
+
 /**
- * Tile of a template of the page in its Create block, with a discreet button
- * editing it when given onEdit: a copy of it then takes its place.
+ * Tile of a template of the page in its Create block, with discreet buttons
+ * editing it, a copy of it then taking its place, and removing it.
  *
  * @param {object} props - Component props
  * @param {string} props.name - Name of the template
  * @param {Function} [props.onEdit] - Edits the template
+ * @param {Function} [props.onRemove] - Removes the template from the page
  * @param {React.ReactNode} props.children - Button creating a file from it
  */
-export const PageTemplateTile = ({ name, onEdit, children }) => (
+export const PageTemplateTile = ({ name, onEdit, onRemove, children }) => (
   <li className={styles['userTemplate']}>
     {children}
-    {onEdit && (
+    {(onEdit || onRemove) && (
       <span className={styles['userTemplate-actions']}>
-        <EditButton name={name} onClick={onEdit} />
+        {onEdit && <EditButton name={name} onClick={onEdit} />}
+        {onRemove && <RemoveButton name={name} onClick={onRemove} />}
       </span>
     )}
   </li>
@@ -64,7 +81,6 @@ export const UserTemplateTile = ({
   onRemove,
   isCreating
 }) => {
-  const { t } = useI18n()
   const { filename } = splitFilename(template)
 
   return (
@@ -81,15 +97,7 @@ export const UserTemplateTile = ({
       </button>
       <span className={styles['userTemplate-actions']}>
         <EditButton name={filename} onClick={() => onEdit(template)} />
-        <IconButton
-          size="small"
-          className={styles['userTemplate-action']}
-          aria-label={t('UserTemplates.remove', { name: filename })}
-          onClick={() => onRemove(template)}
-          data-testid="user-template-remove"
-        >
-          <Icon icon={CrossSmall} />
-        </IconButton>
+        <RemoveButton name={filename} onClick={() => onRemove(template)} />
       </span>
     </li>
   )

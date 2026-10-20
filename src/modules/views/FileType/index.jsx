@@ -27,6 +27,7 @@ import {
   UserTemplateTiles
 } from './UserTemplates/UserTemplateTiles'
 import { saveAsTemplate } from './UserTemplates/saveAsTemplate'
+import { useHiddenTemplates } from './UserTemplates/useHiddenTemplates'
 import { useUserTemplates } from './UserTemplates/useUserTemplates'
 import {
   getReplacedTemplateId,
@@ -106,6 +107,7 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
     [typedFiles, fileType]
   )
   const userTemplates = useUserTemplates(fileType)
+  const hiddenTemplates = useHiddenTemplates(fileType)
   // The files dropped on the page show once uploaded.
   const refreshFiles = useCallback(() => result.fetch(), [result])
   const filteredResult = useCreatedByMe(typedResult, createdByMe)
@@ -146,6 +148,30 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
       })
     }
     userTemplates.refresh()
+  }
+
+  const hidePageTemplate = async templateId => {
+    try {
+      await hiddenTemplates.hide(templateId)
+    } catch (error) {
+      logger.error('Could not remove the template', error)
+      base.showAlert({
+        message: base.t('UserTemplates.remove_error'),
+        severity: 'error'
+      })
+    }
+  }
+
+  const restorePageTemplates = async () => {
+    try {
+      await hiddenTemplates.restore()
+    } catch (error) {
+      logger.error('Could not restore the templates', error)
+      base.showAlert({
+        message: base.t('UserTemplates.restore_error'),
+        severity: 'error'
+      })
+    }
   }
 
   // A template of the page the user edited shows its copy in its place,
@@ -195,6 +221,9 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
       />
     ),
     onEditTemplate: canCreateTemplate ? createTemplate : undefined,
+    hiddenTemplateIds: hiddenTemplates.hiddenIds,
+    onRemoveTemplate: hidePageTemplate,
+    onRestoreTemplates: restorePageTemplates,
     renderCustomizedTemplate: templateId => {
       const template = customizedTemplates.get(templateId)
       return template ? (

@@ -1112,7 +1112,9 @@
     "remove_error": "The template could not be removed.",
     "new": "New template",
     "new_name": "New template",
-    "edit": "Edit the %{name} template"
+    "edit": "Edit the %{name} template",
+    "restore": "Restore the hidden template |||| Restore the %{smart_count} hidden templates",
+    "restore_error": "The templates could not be restored."
   },
   "FileTypeDrop": {
     "rejected": {

@@ -1,6 +1,8 @@
-import { Icon, Upload } from '@linagora/twake-icons'
-import React, { useRef } from 'react'
+import { Icon, Bottom, Upload } from '@linagora/twake-icons'
+import cx from 'classnames'
+import React, { useRef, useState } from 'react'
 
+import Popover from 'cozy-ui/transpiled/react/Popover'
 import { useI18n } from 'twake-i18n'
 
 import styles from './documents.styl'
@@ -13,7 +15,9 @@ const IMPORT_ACCEPT =
 
 /**
  * Create block of the Documents page, as the Mail.ru Documents: a large
- * button per kind of document, then one importing files from the computer.
+ * button per kind of document, creating a blank one, with an arrow opening
+ * its templates in a menu over the page, then one importing files from the
+ * computer.
  *
  * @param {object} props - Component props
  * @param {string[]} props.createTypes - Pages whose files can be created
@@ -21,16 +25,21 @@ const IMPORT_ACCEPT =
  * @param {Function} props.onImport - Uploads the files picked, as dropped
  * @param {boolean} props.canCreate - Whether files can be edited and created
  * @param {boolean} props.isCreating - Whether a file is being created
+ * @param {Function} props.renderTemplates - Templates of a kind
  */
 export const DocumentsCreateStrip = ({
   createTypes,
   onCreate,
   onImport,
   canCreate,
-  isCreating
+  isCreating,
+  renderTemplates
 }) => {
   const { t } = useI18n()
   const inputRef = useRef(null)
+  // Arrow whose templates menu is open, and its kind of document
+  const [templatesMenu, setTemplatesMenu] = useState(null)
+  const closeTemplatesMenu = () => setTemplatesMenu(null)
 
   const handleFiles = event => {
     const files = Array.from(event.target.files ?? [])
@@ -49,10 +58,13 @@ export const DocumentsCreateStrip = ({
           createTypes.map(fileType => {
             const AppIcon = getFileTypePage(fileType).appIcon
             return (
-              <li key={fileType}>
+              <li key={fileType} className={styles['documentsCreate-split']}>
                 <button
                   type="button"
-                  className={styles['documentsCreate-button']}
+                  className={cx(
+                    styles['documentsCreate-button'],
+                    styles['documentsCreate-button--main']
+                  )}
                   disabled={isCreating}
                   onClick={() => onCreate(fileType)}
                   data-testid={`documents-create-${fileType}`}
@@ -61,6 +73,26 @@ export const DocumentsCreateStrip = ({
                   <span className={styles['documentsCreate-label']}>
                     {t(`DocumentsHome.create.${fileType}`)}
                   </span>
+                </button>
+                <button
+                  type="button"
+                  className={cx(
+                    styles['documentsCreate-button'],
+                    styles['documentsCreate-toggle']
+                  )}
+                  aria-haspopup="dialog"
+                  aria-expanded={templatesMenu?.fileType === fileType}
+                  aria-label={t(`DocumentsHome.show_templates.${fileType}`)}
+                  title={t(`DocumentsHome.show_templates.${fileType}`)}
+                  onClick={event =>
+                    setTemplatesMenu({
+                      fileType,
+                      anchorEl: event.currentTarget
+                    })
+                  }
+                  data-testid={`documents-templates-${fileType}`}
+                >
+                  <Icon icon={Bottom} size={14} />
                 </button>
               </li>
             )
@@ -90,6 +122,22 @@ export const DocumentsCreateStrip = ({
           />
         </li>
       </ul>
+      <Popover
+        open={Boolean(templatesMenu)}
+        anchorEl={templatesMenu?.anchorEl}
+        onClose={closeTemplatesMenu}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        {templatesMenu && (
+          <div
+            className={styles['documentsTemplatesMenu']}
+            data-testid="documents-templates-menu"
+          >
+            {renderTemplates(templatesMenu.fileType)}
+          </div>
+        )}
+      </Popover>
     </section>
   )
 }

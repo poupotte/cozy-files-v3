@@ -1,4 +1,3 @@
-import cx from 'classnames'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Navigate, Outlet, useParams } from 'react-router-dom'
 
@@ -12,11 +11,11 @@ import { makeActions } from 'cozy-ui/transpiled/react/ActionsMenu/Actions'
 
 import { BoardCreateStrip } from './Board/BoardCreateStrip'
 import { BoardGrid } from './Board/BoardGrid'
-import { BoardPreview } from './Board/BoardPreview'
 import boardStyles from './Board/board.styl'
 import { DocumentCard } from './Documents/DocumentCard'
 import { DocumentsCreateStrip } from './Documents/DocumentsCreateStrip'
 import { DocumentsFilters } from './Documents/DocumentsFilters'
+import { DocumentsTemplates } from './Documents/DocumentsTemplates'
 import { filterDocuments } from './Documents/documentKinds'
 import { useCreateDocument } from './Documents/useCreateDocument'
 import { FileTypeDropzone } from './FileTypeDropzone'
@@ -25,19 +24,9 @@ import { FileTypeHeader } from './FileTypeHeader'
 import { FileTypeListProvider } from './FileTypeList'
 import { OfficeCard } from './Office/OfficeCard'
 import { OfficeCreateStrip } from './Office/OfficeCreateStrip'
-import { OfficePreview } from './Office/OfficePreview'
-import officeStyles from './Office/office.styl'
-import {
-  UserTemplateTile,
-  UserTemplateTiles
-} from './UserTemplates/UserTemplateTiles'
 import { saveAsTemplate } from './UserTemplates/saveAsTemplate'
-import { useHiddenTemplates } from './UserTemplates/useHiddenTemplates'
-import { useUserTemplates } from './UserTemplates/useUserTemplates'
-import {
-  getReplacedTemplateId,
-  isUserTemplate
-} from './UserTemplates/userTemplates'
+import { useTemplateStrip } from './UserTemplates/useTemplateStrip'
+import { isUserTemplate } from './UserTemplates/userTemplates'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
   FILE_TYPE_SECTION_RECENT,
@@ -45,7 +34,6 @@ import {
   getFileTypePage,
   getFileTypePath
 } from './helpers'
-import { useCreateFileTypeFile } from './useCreateFileTypeFile'
 import { useFileTypeFavicon } from './useFileTypeFavicon'
 import { useFileTypeFiles } from './useFileTypeFiles'
 import { useFileTypeUpload } from './useFileTypeUpload'
@@ -57,7 +45,6 @@ import useHead from '@/components/useHead'
 import { RECENT_FOLDER_ID } from '@/constants/config'
 import { useFolderSort } from '@/hooks'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
-import logger from '@/lib/logger'
 import {
   download,
   trash,
@@ -115,8 +102,6 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
     }),
     [typedFiles, fileType, page]
   )
-  const userTemplates = useUserTemplates(fileType)
-  const hiddenTemplates = useHiddenTemplates(fileType)
   // The files dropped on the page show once uploaded.
   const refreshFiles = useCallback(() => result.fetch(), [result])
   const filteredResult = useCreatedByMe(typedResult, createdByMe)
@@ -138,118 +123,14 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
   // load so the header does not flash before it.
   const isFirstLoad = !result.lastFetch
   const showHeader = !hasNoFile && !isFirstLoad
-  const {
-    createFile,
-    createFromTemplateFile,
-    createTemplate,
-    editTemplate,
-    isCreating
-  } = useCreateFileTypeFile(fileType, page)
+  const { createFile, isCreating, templateStripProps, refreshTemplates } =
+    useTemplateStrip(fileType, page)
 
   // The Documents page creates the files of the Office pages, in their
   // folders, and imports any document in its own.
   const { createDocument, isCreating: isCreatingDocument } = useCreateDocument()
   const importDocuments = useFileTypeUpload(fileType, page, refreshFiles)
   const [documentFilter, setDocumentFilter] = useState('all')
-
-  const removeUserTemplate = async template => {
-    try {
-      await base.client.collection('io.cozy.files').destroy(template)
-    } catch (error) {
-      logger.error('Could not remove the user template', error)
-      base.showAlert({
-        message: base.t('UserTemplates.remove_error'),
-        severity: 'error'
-      })
-    }
-    userTemplates.refresh()
-  }
-
-  const hidePageTemplate = async templateId => {
-    try {
-      await hiddenTemplates.hide(templateId)
-    } catch (error) {
-      logger.error('Could not remove the template', error)
-      base.showAlert({
-        message: base.t('UserTemplates.remove_error'),
-        severity: 'error'
-      })
-    }
-  }
-
-  const restorePageTemplates = async () => {
-    try {
-      await hiddenTemplates.restore()
-    } catch (error) {
-      logger.error('Could not restore the templates', error)
-      base.showAlert({
-        message: base.t('UserTemplates.restore_error'),
-        severity: 'error'
-      })
-    }
-  }
-
-  // A template of the page the user edited shows its copy in its place,
-  // the latest one if several.
-  const { customizedTemplates, ownTemplates } = useMemo(() => {
-    const customized = new Map()
-    const own = []
-    for (const template of userTemplates.templates) {
-      const templateId = getReplacedTemplateId(template, fileType)
-      if (templateId && !customized.has(templateId)) {
-        customized.set(templateId, template)
-      } else {
-        own.push(template)
-      }
-    }
-    return { customizedTemplates: customized, ownTemplates: own }
-  }, [userTemplates.templates, fileType])
-
-  const userTemplateTileProps = {
-    renderPreview: template =>
-      home === 'office' ? (
-        <OfficePreview file={template} shape={fileType} />
-      ) : (
-        <BoardPreview file={template} />
-      ),
-    onCreate: createFromTemplateFile,
-    onEdit: editTemplate,
-    onRemove: removeUserTemplate,
-    isCreating
-  }
-  const canCreateTemplate = page.canCreate()
-
-  const templateStripProps = {
-    userTemplates: (
-      <UserTemplateTiles
-        templates={ownTemplates}
-        newTemplateClassName={
-          home === 'office'
-            ? cx(
-                officeStyles['officeBlank'],
-                officeStyles[`officePreview--${fileType}`]
-              )
-            : boardStyles['boardTemplate-blank']
-        }
-        onCreateTemplate={canCreateTemplate ? createTemplate : undefined}
-        {...userTemplateTileProps}
-      />
-    ),
-    onEditTemplate: canCreateTemplate ? createTemplate : undefined,
-    hiddenTemplateIds: hiddenTemplates.hiddenIds,
-    onRemoveTemplate: hidePageTemplate,
-    onRestoreTemplates: restorePageTemplates,
-    renderCustomizedTemplate: templateId => {
-      const template = customizedTemplates.get(templateId)
-      return template ? (
-        <UserTemplateTile
-          key={templateId}
-          template={template}
-          {...userTemplateTileProps}
-        />
-      ) : null
-    }
-  }
 
   useKeyboardShortcuts({
     client: base.client,
@@ -274,7 +155,7 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
     selectAll: () => base.toggleSelectAllItems(filteredResult?.data || []),
     fileType,
     page,
-    onSaved: userTemplates.refresh
+    onSaved: refreshTemplates
   }
 
   const actions = makeActions(
@@ -320,13 +201,18 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
         {isOnHome ? (
           <div className={boardStyles['boardHome']}>
             {home === 'documents' ? (
-              <DocumentsCreateStrip
-                createTypes={page.createTypes}
-                onCreate={createDocument}
-                onImport={importDocuments}
-                canCreate={page.canCreate()}
-                isCreating={isCreatingDocument}
-              />
+              <>
+                <DocumentsCreateStrip
+                  createTypes={page.createTypes}
+                  onCreate={createDocument}
+                  onImport={importDocuments}
+                  canCreate={page.canCreate()}
+                  isCreating={isCreatingDocument}
+                  renderTemplates={type => (
+                    <DocumentsTemplates key={type} fileType={type} />
+                  )}
+                />
+              </>
             ) : home === 'office' ? (
               <OfficeCreateStrip
                 fileType={fileType}

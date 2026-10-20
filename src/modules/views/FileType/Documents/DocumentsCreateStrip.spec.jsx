@@ -18,6 +18,7 @@ const setup = (props = {}) => {
       onImport={onImport}
       canCreate={true}
       isCreating={false}
+      renderTemplates={type => <div data-testid={`templates-of-${type}`} />}
       {...props}
     />
   )
@@ -51,5 +52,20 @@ describe('DocumentsCreateStrip', () => {
 
     expect(screen.queryByTestId('documents-create-text')).toBe(null)
     expect(screen.queryByTestId('documents-import')).toBeInTheDocument()
+  })
+
+  it('opens the templates of a kind in a menu with its arrow', () => {
+    const { onCreate } = setup()
+
+    expect(screen.queryByTestId('documents-templates-menu')).toBe(null)
+    fireEvent.click(screen.getByTestId('documents-templates-sheet'))
+
+    expect(onCreate).not.toHaveBeenCalled()
+    expect(screen.queryByTestId('templates-of-sheet')).toBeInTheDocument()
+    expect(
+      screen
+        .getByTestId('documents-templates-sheet')
+        .getAttribute('aria-expanded')
+    ).toBe('true')
   })
 })

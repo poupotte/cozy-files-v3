@@ -36,6 +36,10 @@ import { PageTemplateTile } from '../UserTemplates/UserTemplateTiles'
  *   page, from its id
  * @param {Function} [props.onRestoreTemplates] - Shows the removed
  *   templates again
+ * @param {string} [props.shape] - Shape of the tiles, the one of the type by
+ *   default
+ * @param {boolean} [props.withBlank=true] - Whether to offer a blank file
+ * @param {string} [props.title] - Title of the block
  */
 export const OfficeCreateStrip = ({
   fileType,
@@ -46,7 +50,10 @@ export const OfficeCreateStrip = ({
   renderCustomizedTemplate,
   hiddenTemplateIds = [],
   onRemoveTemplate,
-  onRestoreTemplates
+  onRestoreTemplates,
+  shape = fileType,
+  withBlank = true,
+  title
 }) => {
   const { t } = useI18n()
   const templateIds = getOfficeTemplateIds(fileType).filter(
@@ -60,7 +67,7 @@ export const OfficeCreateStrip = ({
     >
       <div className={boardStyles['boardSection-head']}>
         <h2 id="office-strip" className={boardStyles['boardSection-title']}>
-          {t(`OfficeHome.create_title.${fileType}`)}
+          {title ?? t(`OfficeHome.create_title.${fileType}`)}
         </h2>
         {onRestoreTemplates && hiddenTemplateIds.length > 0 && (
           <Button
@@ -75,27 +82,29 @@ export const OfficeCreateStrip = ({
         )}
       </div>
       <ul className={boardStyles['boardStrip-list']}>
-        <li>
-          <button
-            type="button"
-            className={boardStyles['boardTemplate']}
-            disabled={isCreating}
-            onClick={() => onCreate(null)}
-            data-testid="office-create-blank"
-          >
-            <span
-              className={cx(
-                styles['officeBlank'],
-                styles[`officePreview--${fileType}`]
-              )}
+        {withBlank && (
+          <li>
+            <button
+              type="button"
+              className={boardStyles['boardTemplate']}
+              disabled={isCreating}
+              onClick={() => onCreate(null)}
+              data-testid="office-create-blank"
             >
-              <Icon icon={Plus} size={24} />
-            </span>
-            <span className={boardStyles['boardTemplate-name']}>
-              {t(`OfficeHome.blank.${fileType}`)}
-            </span>
-          </button>
-        </li>
+              <span
+                className={cx(
+                  styles['officeBlank'],
+                  styles[`officePreview--${shape}`]
+                )}
+              >
+                <Icon icon={Plus} size={24} />
+              </span>
+              <span className={boardStyles['boardTemplate-name']}>
+                {t(`OfficeHome.blank.${fileType}`)}
+              </span>
+            </button>
+          </li>
+        )}
         {templateIds.map(id => {
           const name = t(`OfficeHome.templates.${id}.name`)
           return (
@@ -115,6 +124,7 @@ export const OfficeCreateStrip = ({
                 >
                   <OfficeTemplatePreview
                     fileType={fileType}
+                    shape={shape}
                     preview={makeOfficeTemplatePreview(fileType, id, t)}
                   />
                   <span className={boardStyles['boardTemplate-name']}>

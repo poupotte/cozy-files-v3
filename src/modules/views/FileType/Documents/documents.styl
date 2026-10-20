@@ -34,6 +34,41 @@
         cursor default
         opacity .6
 
+// A create button and its templates arrow, side by side as one button
+.documentsCreate-split
+    display flex
+
+    // The hovered half shows its whole border over the other
+    > button:hover,
+    > button:focus-visible
+        position relative
+        z-index 1
+
+.documentsCreate-button--main
+    border-top-right-radius 0 !important
+    border-bottom-right-radius 0 !important
+    min-width 0
+
+.documentsCreate-toggle
+    flex 0 0 auto
+    justify-content center
+    width 2.75rem !important
+    padding 0 !important
+    margin-left -1px
+    border-top-left-radius 0 !important
+    border-bottom-left-radius 0 !important
+    color var(--secondaryTextColor) !important
+
+    svg
+        transition transform .15s
+
+    &[aria-expanded='true']
+        border-color var(--primaryColor)
+        color var(--primaryColor) !important
+
+        svg
+            transform rotate(180deg)
+
 .documentsCreate-icon
     flex-shrink 0
     width 2rem
@@ -88,3 +123,21 @@
     height 100%
     object-fit cover
     object-position top
+
+// Templates of a kind of document, in a menu over the page: their tiles in
+// rows rather than the strip of the Office pages.
+.documentsTemplatesMenu
+    box-sizing border-box
+    width 44rem
+    max-width calc(100vw - 2rem)
+    max-height 70vh
+    padding 0 1rem 1rem
+    overflow-y auto
+
+    h2
+        margin-top 1rem
+
+    ul
+        display grid
+        grid-template-columns repeat(auto-fill, minmax(9.5rem, 1fr))
+        overflow visible

@@ -1171,6 +1171,16 @@
   },
   "DocumentsHome": {
     "create_title": "Créer",
+    "templates_title": {
+      "text": "Modèles de document",
+      "sheet": "Modèles de tableur",
+      "slide": "Modèles de présentation"
+    },
+    "show_templates": {
+      "text": "Voir les modèles de document",
+      "sheet": "Voir les modèles de tableur",
+      "slide": "Voir les modèles de présentation"
+    },
     "create": {
       "text": "Document",
       "sheet": "Tableur",

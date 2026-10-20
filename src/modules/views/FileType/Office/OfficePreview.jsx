@@ -160,8 +160,9 @@ export const OfficeTemplatePreview = ({ fileType, preview }) => {
  * @param {object} props - Component props
  * @param {object} props.file - The io.cozy.files doc
  * @param {string} props.shape - Kind of the page, giving the tile its shape
+ * @param {string} [props.className] - Extra class, to size the miniature
  */
-export const OfficePreview = ({ file, shape }) => {
+export const OfficePreview = ({ file, shape, className }) => {
   const client = useClient()
   const containerRef = useRef(null)
   const isVisible = useIsNearViewport(containerRef)
@@ -197,7 +198,11 @@ export const OfficePreview = ({ file, shape }) => {
   return (
     <div
       ref={containerRef}
-      className={cx(styles['officePreview'], styles[`officePreview--${shape}`])}
+      className={cx(
+        styles['officePreview'],
+        styles[`officePreview--${shape}`],
+        className
+      )}
       data-status={status}
       data-testid="office-preview"
     >

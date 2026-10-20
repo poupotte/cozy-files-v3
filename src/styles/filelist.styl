@@ -237,6 +237,18 @@ column-width-thumbnail-bigger = 7rem
     margin 0 auto
     border-radius 8px
 
+// Same square for the Office files, whose page, sheet or slide is cropped.
+.fil-file-thumbnail .fil-file-thumbnail-office
+    width 6rem
+    height 6rem
+    margin 0 auto
+    border-radius 8px
+    aspect-ratio auto
+
+    // Less margin around the text of a document, the tile being small
+    > div:first-child
+        padding .5rem .625rem
+
 .fil-content-shared
     position    absolute
     bottom .8rem

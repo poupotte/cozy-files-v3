@@ -9,16 +9,29 @@ import FileIconMime from '@/modules/filelist/icons/FileIconMime'
 import FileIconShortcut from '@/modules/filelist/icons/FileIconShortcut'
 import { isExcalidraw } from '@/modules/views/Excalidraw/helpers'
 import { BoardPreview } from '@/modules/views/FileType/Board/BoardPreview'
+import { OfficePreview } from '@/modules/views/FileType/Office/OfficePreview'
+import { getOfficePreviewKind } from '@/modules/views/FileType/Office/officePreview'
 
 const FileIcon = ({ file, size, viewType = 'list' }) => {
   const isImage = file.class === 'image'
   const isShortcut = file.class === 'shortcut' && !isDriveBackedFile(file)
+  const officeKind = getOfficePreviewKind(file)
   // A board shows its drawing in the grid, as on the Board page.
   if (viewType === 'grid' && isExcalidraw(file))
     return (
       <BoardPreview
         file={file}
         className={styles['fil-file-thumbnail-board']}
+      />
+    )
+  // A document, spreadsheet or presentation shows its content, as on the
+  // Office pages.
+  if (viewType === 'grid' && officeKind)
+    return (
+      <OfficePreview
+        file={file}
+        shape={officeKind}
+        className={styles['fil-file-thumbnail-office']}
       />
     )
   if (isImage || file.class === 'pdf')

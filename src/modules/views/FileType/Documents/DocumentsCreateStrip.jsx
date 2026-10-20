@@ -1,17 +1,14 @@
 import { Icon, Bottom, Upload } from '@linagora/twake-icons'
 import cx from 'classnames'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 
-import Popover from 'cozy-ui/transpiled/react/Popover'
 import { useI18n } from 'twake-i18n'
 
+import { DocumentsTemplatesMenu } from './DocumentsTemplatesMenu'
 import styles from './documents.styl'
+import { useImportPicker } from './useImportPicker'
 import boardStyles from '../Board/board.styl'
 import { getFileTypePage } from '../helpers'
-
-// Files offered by the Import button: the ones of the page.
-const IMPORT_ACCEPT =
-  '.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv,.ppt,.pptx,.odp,.pdf'
 
 /**
  * Create block of the Documents page, as the Mail.ru Documents: a large
@@ -25,28 +22,19 @@ const IMPORT_ACCEPT =
  * @param {Function} props.onImport - Uploads the files picked, as dropped
  * @param {boolean} props.canCreate - Whether files can be edited and created
  * @param {boolean} props.isCreating - Whether a file is being created
- * @param {Function} props.renderTemplates - Templates of a kind
  */
 export const DocumentsCreateStrip = ({
   createTypes,
   onCreate,
   onImport,
   canCreate,
-  isCreating,
-  renderTemplates
+  isCreating
 }) => {
   const { t } = useI18n()
-  const inputRef = useRef(null)
+  const { openPicker, pickerInput } = useImportPicker(onImport)
   // Arrow whose templates menu is open, and its kind of document
   const [templatesMenu, setTemplatesMenu] = useState(null)
   const closeTemplatesMenu = () => setTemplatesMenu(null)
-
-  const handleFiles = event => {
-    const files = Array.from(event.target.files ?? [])
-    onImport(files.map(file => ({ file, isDirectory: false })))
-    // The same files can be picked again.
-    event.target.value = ''
-  }
 
   return (
     <section aria-labelledby="documents-strip">
@@ -101,7 +89,7 @@ export const DocumentsCreateStrip = ({
           <button
             type="button"
             className={styles['documentsCreate-button']}
-            onClick={() => inputRef.current?.click()}
+            onClick={openPicker}
             data-testid="documents-import"
           >
             <span className={styles['documentsCreate-import']}>
@@ -111,33 +99,13 @@ export const DocumentsCreateStrip = ({
               {t('DocumentsHome.import')}
             </span>
           </button>
-          <input
-            ref={inputRef}
-            type="file"
-            multiple
-            accept={IMPORT_ACCEPT}
-            className={styles['documentsCreate-input']}
-            onChange={handleFiles}
-            data-testid="documents-import-input"
-          />
+          {pickerInput}
         </li>
       </ul>
-      <Popover
-        open={Boolean(templatesMenu)}
-        anchorEl={templatesMenu?.anchorEl}
+      <DocumentsTemplatesMenu
+        menu={templatesMenu}
         onClose={closeTemplatesMenu}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        {templatesMenu && (
-          <div
-            className={styles['documentsTemplatesMenu']}
-            data-testid="documents-templates-menu"
-          >
-            {renderTemplates(templatesMenu.fileType)}
-          </div>
-        )}
-      </Popover>
+      />
     </section>
   )
 }

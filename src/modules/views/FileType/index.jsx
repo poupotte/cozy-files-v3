@@ -15,7 +15,6 @@ import boardStyles from './Board/board.styl'
 import { DocumentCard } from './Documents/DocumentCard'
 import { DocumentsCreateStrip } from './Documents/DocumentsCreateStrip'
 import { DocumentsFilters } from './Documents/DocumentsFilters'
-import { DocumentsTemplates } from './Documents/DocumentsTemplates'
 import { filterDocuments } from './Documents/documentKinds'
 import { useCreateDocument } from './Documents/useCreateDocument'
 import { FileTypeDropzone } from './FileTypeDropzone'
@@ -208,9 +207,6 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
                   onImport={importDocuments}
                   canCreate={page.canCreate()}
                   isCreating={isCreatingDocument}
-                  renderTemplates={type => (
-                    <DocumentsTemplates key={type} fileType={type} />
-                  )}
                 />
               </>
             ) : home === 'office' ? (

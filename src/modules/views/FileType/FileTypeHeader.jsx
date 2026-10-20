@@ -39,13 +39,14 @@ export const FileTypeHeader = ({
 }) => {
   const { t } = useI18n()
   const { createFile, isCreating } = useCreateFileTypeFile(fileType, page)
-  const renderCreateButton = ({ onClick, busy }) => (
+  const renderCreateButton = ({ onClick, busy, a11y }) => (
     <Button
       variant="primary"
       startIcon={<Icon icon={Plus} size={12} />}
       label={t('toolbar.menu_create')}
       busy={busy}
       onClick={onClick}
+      {...a11y}
     />
   )
 
@@ -63,7 +64,8 @@ export const FileTypeHeader = ({
           canCreate &&
           (page.createTypes ? (
             <DocumentsCreateMenu
-              createTypes={page.createTypes}
+              fileType={fileType}
+              page={page}
               renderButton={renderCreateButton}
             />
           ) : (

@@ -7,6 +7,11 @@ jest.mock('twake-i18n', () => ({
   useI18n: () => ({ t: key => key })
 }))
 jest.mock('cozy-flags', () => jest.fn(() => true))
+jest.mock('./DocumentsTemplates', () => ({
+  DocumentsTemplates: ({ fileType }) => (
+    <div data-testid={`templates-of-${fileType}`} />
+  )
+}))
 
 const setup = (props = {}) => {
   const onCreate = jest.fn()
@@ -18,7 +23,6 @@ const setup = (props = {}) => {
       onImport={onImport}
       canCreate={true}
       isCreating={false}
-      renderTemplates={type => <div data-testid={`templates-of-${type}`} />}
       {...props}
     />
   )

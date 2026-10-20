@@ -1109,7 +1109,10 @@
     "saved": "%{name} is now a template: find it when you create a file.",
     "save_error": "The template could not be saved.",
     "remove": "Remove the template %{name}",
-    "remove_error": "The template could not be removed."
+    "remove_error": "The template could not be removed.",
+    "new": "New template",
+    "new_name": "New template",
+    "edit": "Edit the %{name} template"
   },
   "BoardHome": {
     "see_all": "See all",

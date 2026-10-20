@@ -1109,7 +1109,10 @@
     "saved": "%{name} est maintenant un modèle : tu le retrouveras au moment de créer un fichier.",
     "save_error": "Le modèle n'a pas pu être enregistré.",
     "remove": "Retirer le modèle %{name}",
-    "remove_error": "Le modèle n'a pas pu être retiré."
+    "remove_error": "Le modèle n'a pas pu être retiré.",
+    "new": "Nouveau modèle",
+    "new_name": "Nouveau modèle",
+    "edit": "Modifier le modèle %{name}"
   },
   "BoardHome": {
     "see_all": "Tout voir",

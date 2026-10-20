@@ -1,9 +1,21 @@
 import { Q } from 'cozy-client'
-import { splitFilename } from 'cozy-client/dist/models/file'
+import {
+  splitFilename,
+  uploadFileWithConflictStrategy
+} from 'cozy-client/dist/models/file'
 
 import { ensureFileTypeFolder } from '../fileTypeFolder'
 
 import { TRASH_DIR_PATH } from '@/constants/config'
+import {
+  EXCALIDRAW_EXTENSION,
+  EXCALIDRAW_MIME,
+  makeEmptyScene
+} from '@/modules/views/Excalidraw/helpers'
+import {
+  makeExtByClass,
+  makeMimeByClass
+} from '@/modules/views/OnlyOffice/helpers'
 
 // Files saved as templates by the user, as the Google Docs "Submit template"
 // of the template gallery: a copy of the file, in a Templates folder of the
@@ -81,6 +93,59 @@ const ensureUserTemplatesFolder = async (client, fileType, page, t) => {
     const { data } = await collection.createDirectoryByPath(path)
     return data
   }
+}
+
+// OnlyOffice class of the blank file of an Office page.
+const OFFICE_CLASS_BY_FILE_TYPE = {
+  text: 'text',
+  sheet: 'spreadsheet',
+  slide: 'slide'
+}
+
+// Content of an empty file of the type: the blank OnlyOffice file, or an
+// empty scene for a board.
+const makeBlankFile = async (client, fileType) => {
+  const fileClass = OFFICE_CLASS_BY_FILE_TYPE[fileType]
+  if (!fileClass) {
+    const scene = makeEmptyScene(client.getStackClient().uri)
+    return {
+      content: JSON.stringify(scene),
+      extension: EXCALIDRAW_EXTENSION,
+      contentType: EXCALIDRAW_MIME
+    }
+  }
+  const extension = makeExtByClass(fileClass)
+  const response = await fetch(`/onlyOffice/${fileClass}.${extension}`)
+  if (!response.ok) throw new Error(`No blank ${fileClass} file`)
+  return {
+    content: await response.arrayBuffer(),
+    extension,
+    contentType: makeMimeByClass(fileClass)
+  }
+}
+
+/**
+ * Creates an empty template of a type, to be filled in its editor, as the
+ * "New template" of the Google Docs template gallery.
+ * @returns {Promise<object>} The template
+ */
+export const createUserTemplate = async ({ client, fileType, page, t }) => {
+  const folder = await ensureUserTemplatesFolder(client, fileType, page, t)
+  const { content, extension, contentType } = await makeBlankFile(
+    client,
+    fileType
+  )
+  const { data } = await uploadFileWithConflictStrategy(client, content, {
+    name: `${t('UserTemplates.new_name')}.${extension}`,
+    dirId: folder._id,
+    conflictStrategy: 'rename',
+    contentType
+  })
+  const template = { ...data, _id: data._id ?? data.id, _type: 'io.cozy.files' }
+  await client
+    .collection('io.cozy.files')
+    .addReferencedBy(template, [getUserTemplateReference(fileType)])
+  return template
 }
 
 /**

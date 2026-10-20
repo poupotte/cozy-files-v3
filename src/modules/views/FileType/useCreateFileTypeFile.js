@@ -2,8 +2,12 @@ import { useCallback, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useClient } from 'cozy-client'
+import { useI18n } from 'twake-i18n'
 
-import { createFromUserTemplate } from './UserTemplates/userTemplates'
+import {
+  createFromUserTemplate,
+  createUserTemplate
+} from './UserTemplates/userTemplates'
 import { ensureFileTypeFolder } from './fileTypeFolder'
 
 import { ROOT_DIR_ID } from '@/constants/config'
@@ -16,11 +20,13 @@ import { makeOnlyOfficeFileRoute } from '@/modules/views/OnlyOffice/helpers'
  * Presentation or Board), creating that folder first when it does not exist.
  * The editor then goes back to the page, with its filters, not to the folder.
  * A file can start from one of the templates of the page, given by id, or
- * from a template the user saved, given as a file.
+ * from a template the user saved, given as a file. Templates the user saves
+ * are created and edited in the editor of the type too.
  */
 export const useCreateFileTypeFile = (fileType, page) => {
   const client = useClient()
   const navigate = useNavigate()
+  const { t } = useI18n()
   const { pathname, search } = useLocation()
   const [isCreating, setIsCreating] = useState(false)
 
@@ -49,6 +55,22 @@ export const useCreateFileTypeFile = (fileType, page) => {
     [client, fileType, navigate, page, pathname, search]
   )
 
+  // Opens a file in the editor of the type, which goes back to the page.
+  const openInEditor = useCallback(
+    file => {
+      const from = `${pathname}${search}`
+      navigate(
+        page.home === 'board'
+          ? makeExcalidrawFileRoute(file._id, { fromPathname: from })
+          : makeOnlyOfficeFileRoute(file._id, {
+              fromCreate: true,
+              fromRedirect: `drive#${from}`
+            })
+      )
+    },
+    [navigate, page, pathname, search]
+  )
+
   const createFromTemplateFile = useCallback(
     async template => {
       setIsCreating(true)
@@ -59,22 +81,31 @@ export const useCreateFileTypeFile = (fileType, page) => {
           fileType,
           page
         })
-        const from = `${pathname}${search}`
-        navigate(
-          page.home === 'board'
-            ? makeExcalidrawFileRoute(file._id, { fromPathname: from })
-            : makeOnlyOfficeFileRoute(file._id, {
-                fromCreate: true,
-                fromRedirect: `drive#${from}`
-              })
-        )
+        openInEditor(file)
       } catch (error) {
         logger.error(`Could not create a ${fileType} from a template`, error)
         setIsCreating(false)
       }
     },
-    [client, fileType, navigate, page, pathname, search]
+    [client, fileType, openInEditor, page]
   )
 
-  return { createFile, createFromTemplateFile, isCreating }
+  const createTemplate = useCallback(async () => {
+    setIsCreating(true)
+    try {
+      const template = await createUserTemplate({ client, fileType, page, t })
+      openInEditor(template)
+    } catch (error) {
+      logger.error(`Could not create a ${fileType} template`, error)
+      setIsCreating(false)
+    }
+  }, [client, fileType, openInEditor, page, t])
+
+  return {
+    createFile,
+    createFromTemplateFile,
+    createTemplate,
+    editTemplate: openInEditor,
+    isCreating
+  }
 }

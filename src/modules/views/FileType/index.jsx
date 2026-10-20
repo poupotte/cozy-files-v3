@@ -1,3 +1,4 @@
+import cx from 'classnames'
 import React, { useMemo } from 'react'
 import { Navigate, Outlet, useParams } from 'react-router-dom'
 
@@ -20,6 +21,7 @@ import { FileTypeListProvider } from './FileTypeList'
 import { OfficeCard } from './Office/OfficeCard'
 import { OfficeCreateStrip } from './Office/OfficeCreateStrip'
 import { OfficePreview } from './Office/OfficePreview'
+import officeStyles from './Office/office.styl'
 import { UserTemplateTiles } from './UserTemplates/UserTemplateTiles'
 import { saveAsTemplate } from './UserTemplates/saveAsTemplate'
 import { useUserTemplates } from './UserTemplates/useUserTemplates'
@@ -117,8 +119,13 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
   // load so the header does not flash before it.
   const isFirstLoad = !result.lastFetch
   const showHeader = !hasNoFile && !isFirstLoad
-  const { createFile, createFromTemplateFile, isCreating } =
-    useCreateFileTypeFile(fileType, page)
+  const {
+    createFile,
+    createFromTemplateFile,
+    createTemplate,
+    editTemplate,
+    isCreating
+  } = useCreateFileTypeFile(fileType, page)
 
   const removeUserTemplate = async template => {
     try {
@@ -143,7 +150,17 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
           <BoardPreview file={template} />
         )
       }
+      newTemplateClassName={
+        home === 'office'
+          ? cx(
+              officeStyles['officeBlank'],
+              officeStyles[`officePreview--${fileType}`]
+            )
+          : boardStyles['boardTemplate-blank']
+      }
       onCreate={createFromTemplateFile}
+      onCreateTemplate={page.canCreate() ? createTemplate : undefined}
+      onEdit={editTemplate}
       onRemove={removeUserTemplate}
       isCreating={isCreating}
     />

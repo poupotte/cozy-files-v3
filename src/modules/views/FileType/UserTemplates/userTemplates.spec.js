@@ -1,10 +1,19 @@
+import { uploadFileWithConflictStrategy } from 'cozy-client/dist/models/file'
+
 import {
   createFromUserTemplate,
+  createUserTemplate,
   getUserTemplateReference,
   isUserTemplate,
   saveAsUserTemplate
 } from './userTemplates'
 
+jest.mock('cozy-client/dist/models/file', () => ({
+  ...jest.requireActual('cozy-client/dist/models/file'),
+  uploadFileWithConflictStrategy: jest.fn(async (client, content, options) => ({
+    data: { id: 'new-template', name: options.name, dir_id: options.dirId }
+  }))
+}))
 jest.mock('../fileTypeFolder', () => ({
   ensureFileTypeFolder: async () => ({ _id: 'board-dir', path: '/Board' })
 }))
@@ -32,7 +41,11 @@ const makeClient = ({ takenNames = [] } = {}) => {
     addReferencedBy: jest.fn(),
     removeReferencedBy: jest.fn()
   }
-  return { collection: () => collection, files: collection }
+  return {
+    collection: () => collection,
+    files: collection,
+    getStackClient: () => ({ uri: 'https://alice.example' })
+  }
 }
 
 describe('isUserTemplate', () => {
@@ -85,6 +98,31 @@ describe('createFromUserTemplate', () => {
 
     expect(file.dir_id).toBe('board-dir')
     expect(client.files.removeReferencedBy).toHaveBeenCalledWith(file, [
+      reference
+    ])
+  })
+})
+
+describe('createUserTemplate', () => {
+  it('creates an empty board in the Templates folder and references it', async () => {
+    const client = makeClient()
+
+    const template = await createUserTemplate({
+      client,
+      fileType: 'excalidraw',
+      page: {},
+      t: key => key
+    })
+
+    const [, content, options] = uploadFileWithConflictStrategy.mock.calls[0]
+    expect(JSON.parse(content).elements).toEqual([])
+    expect(options).toMatchObject({
+      name: 'UserTemplates.new_name.excalidraw',
+      dirId: 'templates-dir',
+      conflictStrategy: 'rename'
+    })
+    expect(template._id).toBe('new-template')
+    expect(client.files.addReferencedBy).toHaveBeenCalledWith(template, [
       reference
     ])
   })

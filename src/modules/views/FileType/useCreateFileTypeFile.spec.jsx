@@ -13,6 +13,9 @@ jest.mock('cozy-client', () => ({
   useClient: () => ({})
 }))
 jest.mock('cozy-flags', () => jest.fn(() => true))
+jest.mock('twake-i18n', () => ({
+  useI18n: () => ({ t: key => key })
+}))
 jest.mock('./fileTypeFolder', () => ({
   ensureFileTypeFolder: jest.fn()
 }))

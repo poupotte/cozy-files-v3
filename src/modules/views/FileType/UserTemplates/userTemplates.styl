@@ -1,17 +1,28 @@
-// The remove button of a user template only shows on hover, so the Create
-// block stays as quiet as with the templates of the page.
+// The edit and remove buttons of a user template only show on hover, so the
+// Create block stays as quiet as with the templates of the page.
 .userTemplate
     position relative
 
-    &:hover .userTemplate-remove,
-    &:focus-within .userTemplate-remove
+    &:hover .userTemplate-actions,
+    &:focus-within .userTemplate-actions
         opacity 1
 
-.userTemplate-remove
-    position absolute !important
+.userTemplate-actions
+    position absolute
     top .25rem
     right .25rem
+    display flex
+    gap .25rem
     opacity 0
+    transition opacity .15s
+
+.userTemplate-action
     background-color var(--paperBackgroundColor) !important
     box-shadow var(--shadow1)
-    transition opacity .15s
+
+// The new template tile is shaped as the blank file of the page, in grey so
+// that it is not taken for it: it makes a template rather than a file.
+.userTemplate-new
+    border-color var(--borderMainColor) !important
+    background-color transparent !important
+    color var(--secondaryTextColor) !important

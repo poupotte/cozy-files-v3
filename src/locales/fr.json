@@ -1114,6 +1114,15 @@
     "new_name": "Nouveau modèle",
     "edit": "Modifier le modèle %{name}"
   },
+  "FileTypeDrop": {
+    "rejected": {
+      "text": "%{name} n'est pas un document, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des documents, ils n'ont pas été ajoutés.",
+      "sheet": "%{name} n'est pas un tableur, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des tableurs, ils n'ont pas été ajoutés.",
+      "slide": "%{name} n'est pas une présentation, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des présentations, ils n'ont pas été ajoutés.",
+      "excalidraw": "%{name} n'est pas un tableau Board, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des tableaux Board, ils n'ont pas été ajoutés."
+    },
+    "error": "Les fichiers n'ont pas pu être ajoutés."
+  },
   "BoardHome": {
     "see_all": "Tout voir",
     "create_title": "Créer un tableau",

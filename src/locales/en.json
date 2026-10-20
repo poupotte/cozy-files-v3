@@ -1114,6 +1114,15 @@
     "new_name": "New template",
     "edit": "Edit the %{name} template"
   },
+  "FileTypeDrop": {
+    "rejected": {
+      "text": "%{name} is not a document, it was not added. |||| %{smart_count} files are not documents, they were not added.",
+      "sheet": "%{name} is not a spreadsheet, it was not added. |||| %{smart_count} files are not spreadsheets, they were not added.",
+      "slide": "%{name} is not a presentation, it was not added. |||| %{smart_count} files are not presentations, they were not added.",
+      "excalidraw": "%{name} is not a board, it was not added. |||| %{smart_count} files are not boards, they were not added."
+    },
+    "error": "The files could not be added."
+  },
   "BoardHome": {
     "see_all": "See all",
     "create_title": "Create a board",

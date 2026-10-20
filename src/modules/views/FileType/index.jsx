@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Navigate, Outlet, useParams } from 'react-router-dom'
 
 import flag from 'cozy-flags'
@@ -9,12 +9,12 @@ import {
   shareNative
 } from 'cozy-sharing'
 import { makeActions } from 'cozy-ui/transpiled/react/ActionsMenu/Actions'
-import { Content } from 'cozy-ui/transpiled/react/Layout'
 
 import { BoardCreateStrip } from './Board/BoardCreateStrip'
 import { BoardGrid } from './Board/BoardGrid'
 import { BoardPreview } from './Board/BoardPreview'
 import boardStyles from './Board/board.styl'
+import { FileTypeDropzone } from './FileTypeDropzone'
 import { FileTypeEmpty } from './FileTypeEmpty'
 import { FileTypeHeader } from './FileTypeHeader'
 import { FileTypeListProvider } from './FileTypeList'
@@ -100,6 +100,8 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
     [typedFiles, fileType]
   )
   const userTemplates = useUserTemplates(fileType)
+  // The files dropped on the page show once uploaded.
+  const refreshFiles = useCallback(() => result.fetch(), [result])
   const filteredResult = useCreatedByMe(typedResult, createdByMe)
   const recentSection = isHome
     ? FILE_TYPE_SECTION_RECENT
@@ -217,7 +219,12 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
 
   return (
     <FolderView>
-      <Content className={base.isMobile ? '' : 'u-pt-1'}>
+      <FileTypeDropzone
+        fileType={fileType}
+        page={page}
+        onUploaded={refreshFiles}
+        className={base.isMobile ? '' : 'u-pt-1'}
+      >
         {(showHeader || (isOnHome && !isFirstLoad)) && (
           <FileTypeHeader
             title={title}
@@ -298,7 +305,7 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
         >
           <Outlet />
         </FileTypeListProvider>
-      </Content>
+      </FileTypeDropzone>
     </FolderView>
   )
 }

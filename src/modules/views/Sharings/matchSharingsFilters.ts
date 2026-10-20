@@ -179,7 +179,7 @@ const FILE_TYPE_CLASSIFIERS: FileTypeClassifier[] = [
   getMimeFileType
 ]
 
-function getSharingsEntryFileType(entry: IOCozyFile): OptionalFileType {
+export function getSharingsEntryFileType(entry: IOCozyFile): OptionalFileType {
   const context = getFileTypeContext(entry)
 
   for (const classifier of FILE_TYPE_CLASSIFIERS) {

@@ -3,7 +3,8 @@
 
 .documentsCreate
     display grid
-    grid-template-columns repeat(auto-fill, minmax(12rem, 1fr))
+    // Wide enough for the longest name, Text document, on one line
+    grid-template-columns repeat(auto-fill, minmax(15rem, 1fr))
     gap .75rem
     margin 0
     padding 0
@@ -86,7 +87,10 @@
     color var(--secondaryTextColor)
 
 .documentsCreate-label
+    overflow hidden
     font-weight 500
+    white-space nowrap
+    text-overflow ellipsis
 
 .documentsCreate-input
     display none

@@ -1182,7 +1182,7 @@
       "slide": "Voir les modèles de présentation"
     },
     "create": {
-      "text": "Document",
+      "text": "Document texte",
       "sheet": "Tableur",
       "slide": "Présentation"
     },
@@ -1190,14 +1190,14 @@
     "filters": "Type de document",
     "filter": {
       "all": "Tous",
-      "text": "Documents",
+      "text": "Documents texte",
       "sheet": "Tableurs",
       "slide": "Présentations",
       "pdf": "PDF"
     },
     "no_file": {
       "all": "Tes documents, tableurs, présentations et PDF s'afficheront ici.",
-      "text": "Aucun document récent.",
+      "text": "Aucun document texte récent.",
       "sheet": "Aucun tableur récent.",
       "slide": "Aucune présentation récente.",
       "pdf": "Aucun PDF récent."

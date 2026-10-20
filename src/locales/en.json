@@ -1182,7 +1182,7 @@
       "slide": "Show the presentation templates"
     },
     "create": {
-      "text": "Document",
+      "text": "Text document",
       "sheet": "Spreadsheet",
       "slide": "Presentation"
     },
@@ -1190,14 +1190,14 @@
     "filters": "Document type",
     "filter": {
       "all": "All",
-      "text": "Documents",
+      "text": "Text documents",
       "sheet": "Spreadsheets",
       "slide": "Presentations",
       "pdf": "PDF"
     },
     "no_file": {
       "all": "Your documents, spreadsheets, presentations and PDF will show here.",
-      "text": "No recent document.",
+      "text": "No recent text document.",
       "sheet": "No recent spreadsheet.",
       "slide": "No recent presentation.",
       "pdf": "No recent PDF."

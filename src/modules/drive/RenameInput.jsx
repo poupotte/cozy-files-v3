@@ -9,16 +9,27 @@ import { useI18n } from 'twake-i18n'
 
 import { abortRenaming } from './rename'
 
+import logger from '@/lib/logger'
 import FilenameInput from '@/modules/filelist/FilenameInput'
+import { restoreExcalidrawMime } from '@/modules/views/Excalidraw/restoreExcalidrawMime'
 
 // If we set the _rev then CozyClient tries to update. Else
 // it tries to create
 export const updateFileNameQuery = async (client, file, newName) => {
-  return client.collection('io.cozy.files', { driveId: file.driveId }).update({
-    ...file,
-    name: newName,
-    _rev: file._rev || file.meta.rev
-  })
+  const result = await client
+    .collection('io.cozy.files', { driveId: file.driveId })
+    .update({
+      ...file,
+      name: newName,
+      _rev: file._rev || file.meta.rev
+    })
+  // The stack types a renamed board by its name, which it does not know.
+  try {
+    await restoreExcalidrawMime(client, { ...file, ...result?.data })
+  } catch (error) {
+    logger.warn('Could not restore the type of the renamed board', error)
+  }
+  return result
 }
 
 export const RenameInput = ({

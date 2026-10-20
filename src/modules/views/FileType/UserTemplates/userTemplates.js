@@ -9,11 +9,13 @@ import { applyOfficeTemplate } from '../Office/officeTemplates'
 import { ensureFileTypeFolder } from '../fileTypeFolder'
 
 import { TRASH_DIR_PATH } from '@/constants/config'
+import logger from '@/lib/logger'
 import {
   EXCALIDRAW_EXTENSION,
   EXCALIDRAW_MIME,
   makeEmptyScene
 } from '@/modules/views/Excalidraw/helpers'
+import { restoreExcalidrawMime } from '@/modules/views/Excalidraw/restoreExcalidrawMime'
 import {
   makeExtByClass,
   makeMimeByClass
@@ -98,7 +100,7 @@ const isConflict = error => error?.status === 409 || /409/.test(error?.message)
 
 // Copies a file, adding (2), (3)… to its name while the folder already has
 // one of that name.
-const copyWithFreeName = async (client, fileId, name, dirId) => {
+const copyFreely = async (client, fileId, name, dirId) => {
   const { filename, extension } = splitFilename({ name, type: 'file' })
   for (let index = 1; index <= 20; index++) {
     const candidate = index === 1 ? name : `${filename} (${index})${extension}`
@@ -112,6 +114,18 @@ const copyWithFreeName = async (client, fileId, name, dirId) => {
     }
   }
   throw new Error('No free name to copy the file')
+}
+
+// A board copy gets back the type a renamed board lost, keeping the
+// references of the copy.
+const copyWithFreeName = async (client, fileId, name, dirId) => {
+  const copy = await copyFreely(client, fileId, name, dirId)
+  try {
+    return { ...copy, ...(await restoreExcalidrawMime(client, copy)) }
+  } catch (error) {
+    logger.warn('Could not restore the type of the board copy', error)
+    return copy
+  }
 }
 
 const ensureUserTemplatesFolder = async (client, fileType, page, t) => {

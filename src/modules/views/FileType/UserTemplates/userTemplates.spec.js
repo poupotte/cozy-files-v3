@@ -15,6 +15,12 @@ jest.mock('cozy-client/dist/models/file', () => ({
     data: { id: 'new-template', name: options.name, dir_id: options.dirId }
   }))
 }))
+jest.mock('@/modules/views/Excalidraw/restoreExcalidrawMime', () => ({
+  restoreExcalidrawMime: async (client, file) => ({
+    ...file,
+    mime: 'application/vnd.excalidraw+json'
+  })
+}))
 jest.mock('../Board/boardTemplates', () => ({
   getBoardTemplate: id => (id === 'kanban' ? { id } : null),
   makeTemplateElements: async () => [{ id: 'column' }]
@@ -102,6 +108,7 @@ describe('createFromUserTemplate', () => {
     })
 
     expect(file.dir_id).toBe('board-dir')
+    expect(file.mime).toBe('application/vnd.excalidraw+json')
     expect(client.files.removeReferencedBy).toHaveBeenCalledWith(file, [
       reference
     ])

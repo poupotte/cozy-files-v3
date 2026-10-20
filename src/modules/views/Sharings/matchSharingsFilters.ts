@@ -190,9 +190,26 @@ export function getSharingsEntryFileType(entry: IOCozyFile): OptionalFileType {
   return null
 }
 
+// Types grouping others, as the Documents page lists the documents,
+// spreadsheets, presentations and PDF.
+const FILE_TYPE_GROUPS: Record<string, readonly FileType[]> = {
+  documents: ['text', 'sheet', 'slide', 'pdf']
+}
+
+/**
+ * Whether a type is the one filtered, or one of the types of its group.
+ */
+export function isFileTypeOf(
+  entryFileType: OptionalFileType,
+  fileType: string
+): boolean {
+  if (entryFileType === null) return false
+  const group = FILE_TYPE_GROUPS[fileType]
+  return group ? group.includes(entryFileType) : entryFileType === fileType
+}
+
 function isSharingsEntryFileType(entry: IOCozyFile, fileType: string): boolean {
-  const entryFileType = getSharingsEntryFileType(entry)
-  return entryFileType === fileType
+  return isFileTypeOf(getSharingsEntryFileType(entry), fileType)
 }
 
 function isSharingsEntryModificationDate(

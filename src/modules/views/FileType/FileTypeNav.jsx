@@ -13,6 +13,7 @@ import Button from 'cozy-ui/transpiled/react/Buttons'
 import UINav from 'cozy-ui/transpiled/react/Nav'
 import { useI18n } from 'twake-i18n'
 
+import { DocumentsCreateMenu } from './Documents/DocumentsCreateMenu'
 import { getFileTypeSharingsPath } from './FileTypeSharingsView'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
@@ -46,17 +47,27 @@ const isInSection = (pathname, fileType, section) => {
 export const FileTypeCreateButton = ({ fileType, page }) => {
   const { t } = useI18n()
   const { createFile, isCreating } = useCreateFileTypeFile(fileType, page)
+  const renderButton = ({ onClick, busy }) => (
+    <Button
+      className="u-w-100 u-bdrs-6 u-mt-half u-mb-half u-fz-small"
+      variant="primary"
+      startIcon={<Icon icon={Plus} size={12} />}
+      label={t('toolbar.menu_create')}
+      busy={busy}
+      onClick={onClick}
+    />
+  )
 
   return (
     <div className="u-mh-1 u-mt-half">
-      <Button
-        className="u-w-100 u-bdrs-6 u-mt-half u-mb-half u-fz-small"
-        variant="primary"
-        startIcon={<Icon icon={Plus} size={12} />}
-        label={t('toolbar.menu_create')}
-        busy={isCreating}
-        onClick={createFile}
-      />
+      {page.createTypes ? (
+        <DocumentsCreateMenu
+          createTypes={page.createTypes}
+          renderButton={renderButton}
+        />
+      ) : (
+        renderButton({ onClick: createFile, busy: isCreating })
+      )}
     </div>
   )
 }

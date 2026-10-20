@@ -1,0 +1,90 @@
+// Documents page home, as the Mail.ru Documents: large create buttons, then
+// filters over the recent documents (see ../Board/board.styl for the grid).
+
+.documentsCreate
+    display grid
+    grid-template-columns repeat(auto-fill, minmax(12rem, 1fr))
+    gap .75rem
+    margin 0
+    padding 0
+    list-style none
+
+.documentsCreate-button
+    display flex
+    align-items center
+    gap .75rem
+    width 100%
+    padding .875rem 1rem
+    border 1px solid var(--dividerColor)
+    border-radius 12px
+    background-color var(--paperBackgroundColor)
+    color var(--primaryTextColor)
+    font inherit
+    text-align left
+    cursor pointer
+    transition border-color .15s, box-shadow .15s
+
+    &:hover:not(:disabled),
+    &:focus-visible
+        border-color var(--primaryColor)
+        box-shadow var(--shadow2)
+        outline 0
+
+    &:disabled
+        cursor default
+        opacity .6
+
+.documentsCreate-icon
+    flex-shrink 0
+    width 2rem
+    height 2rem
+
+.documentsCreate-import
+    display flex
+    flex-shrink 0
+    align-items center
+    justify-content center
+    width 2rem
+    height 2rem
+    border-radius 8px
+    background-color var(--contrastBackgroundColor)
+    color var(--secondaryTextColor)
+
+.documentsCreate-label
+    font-weight 500
+
+.documentsCreate-input
+    display none
+
+.documentsFilters
+    display flex
+    flex-wrap wrap
+    gap .5rem
+    margin-bottom 1rem
+
+.documentsFilters-chip
+    padding .375rem .875rem
+    border 1px solid var(--dividerColor)
+    border-radius 2rem
+    background-color transparent
+    color var(--primaryTextColor)
+    font inherit
+    font-size .875rem
+    cursor pointer
+    transition background-color .15s, border-color .15s
+
+    &:hover
+        background-color var(--actionColorHover)
+
+    &[aria-pressed='true']
+        border-color var(--primaryColor)
+        background-color var(--primaryColor)
+        color var(--primaryContrastTextColor)
+
+// The page of a PDF fills its tile from the top, as a document page.
+.documentCard-pdf
+    display block
+    width 100%
+    height 100%
+    object-fit cover
+    object-position top

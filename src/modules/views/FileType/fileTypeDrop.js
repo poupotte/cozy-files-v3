@@ -1,4 +1,7 @@
-import { getSharingsEntryFileType } from '@/modules/views/Sharings/matchSharingsFilters'
+import {
+  getSharingsEntryFileType,
+  isFileTypeOf
+} from '@/modules/views/Sharings/matchSharingsFilters'
 
 // A file dropped from a folder has the path of that folder.
 const isInDroppedFolder = file =>
@@ -33,7 +36,7 @@ export const sortDroppedFiles = (entries, fileType) => {
     if (
       !isDirectory &&
       !isInDroppedFolder(file) &&
-      getDroppedFileType(file) === fileType
+      isFileTypeOf(getDroppedFileType(file), fileType)
     ) {
       accepted.push(file)
     } else {

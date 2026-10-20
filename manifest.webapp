@@ -167,6 +167,21 @@
       "conditions": [{ "type": "flag", "name": "drive.office.enabled", "value": true }, { "type": "flag", "name": "drive.office.write", "value": true }]
     },
     {
+      "name": "new-file-type-documents",
+      "title": {
+        "en": "Documents",
+        "fr": "Documents",
+        "de": "Dokumente",
+        "es": "Documentos",
+        "it": "Documenti",
+        "ru": "Документы",
+        "vi": "Tài liệu"
+      },
+      "hash": "/type/documents",
+      "icon": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjIxIiBoZWlnaHQ9IjI2IiB4PSI5IiB5PSIxIiBmaWxsPSIjQTlDNEZGIiByeD0iNCIvPjxwYXRoIGZpbGw9IiMyRjZGRUQiIGQ9Ik03IDVoMTFsNyA3djE1YTQgNCAwIDAgMS00IDRIN2E0IDQgMCAwIDEtNC00VjlhNCA0IDAgMCAxIDQtNFoiLz48cGF0aCBmaWxsPSIjMUY1N0M5IiBkPSJNMTggNWw3IDdoLTRhMyAzIDAgMCAxLTMtM1Y1WiIvPjxyZWN0IHdpZHRoPSIxMyIgaGVpZ2h0PSIyLjQiIHg9IjciIHk9IjE1IiBmaWxsPSIjZmZmIiByeD0iMS4yIi8+PHJlY3Qgd2lkdGg9IjEzIiBoZWlnaHQ9IjIuNCIgeD0iNyIgeT0iMTkuNSIgZmlsbD0iI2ZmZiIgcng9IjEuMiIvPjxyZWN0IHdpZHRoPSI5IiBoZWlnaHQ9IjIuNCIgeD0iNyIgeT0iMjQiIGZpbGw9IiNmZmYiIHJ4PSIxLjIiLz48L3N2Zz4K",
+      "conditions": [{ "type": "flag", "name": "drive.office.enabled", "value": true }]
+    },
+    {
       "name": "new-file-type-excalidraw",
       "title": {
         "en": "Board",

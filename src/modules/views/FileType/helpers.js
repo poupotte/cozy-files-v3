@@ -1,6 +1,8 @@
 import {
   BoardApp,
   BoardAppText,
+  DocumentsApp,
+  DocumentsAppText,
   DocApp,
   DocAppText,
   PresentationApp,
@@ -35,9 +37,12 @@ const OFFICE_HOME = {
 //   Personalize folder action does, so it looks like its app
 // - defaultViewType, viewTypeSetting: list or grid view shown until one is
 //   picked, and the settings attribute the pick of these pages is saved in
-// - home: the home the page opens on, 'board' or 'office', with templates
-//   and the latest files as tiles showing their content (see Board/ and
-//   Office/), its recent files moving to a section of their own
+// - home: the home the page opens on, 'board', 'office' or 'documents', with
+//   templates or create buttons and the latest files as tiles showing their
+//   content (see Board/, Office/ and Documents/), its recent files moving to
+//   a section of their own
+// - createTypes: pages whose files the page creates, for a page listing the
+//   files of several types, instead of a file of its own
 export const FILE_TYPE_PAGES = {
   text: {
     classes: ['text', 'document'],
@@ -96,6 +101,34 @@ export const FILE_TYPE_PAGES = {
     defaultViewType: 'grid',
     viewTypeSetting: 'preferredBoardViewType',
     home: 'board'
+  },
+  // Every document, as the Documents of Mail.ru: the files of the Office
+  // pages, and the PDF.
+  documents: {
+    classes: [
+      'text',
+      'document',
+      'spreadsheet',
+      'sheet',
+      'slide',
+      'presentation',
+      'pdf'
+    ],
+    createTypes: ['text', 'sheet', 'slide'],
+    canCreate: canWriteOfficeDocument,
+    createPath: folderId => `/onlyoffice/create/${folderId}/text`,
+    appIcon: DocumentsApp,
+    appTextIcon: DocumentsAppText,
+    appName: 'Twake Documents',
+    folderName: 'Documents',
+    folderDecorations: {
+      color: '#2F6FED',
+      icon: 'Text',
+      icon_color: '#FFFFFF'
+    },
+    defaultViewType: 'grid',
+    viewTypeSetting: 'preferredDocumentsViewType',
+    home: 'documents'
   }
 }
 

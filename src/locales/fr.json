@@ -883,19 +883,22 @@
       "text": "Documents créés par moi",
       "sheet": "Feuilles de calcul créées par moi",
       "slide": "Présentations créées par moi",
-      "excalidraw": "Boards créés par moi"
+      "excalidraw": "Boards créés par moi",
+      "documents": "Documents créés par moi"
     },
     "title": {
       "text": "Derniers documents",
       "sheet": "Dernières feuilles de calcul",
       "slide": "Dernières présentations",
-      "excalidraw": "Derniers boards"
+      "excalidraw": "Derniers boards",
+      "documents": "Derniers documents"
     },
     "title_home": {
       "text": "Mes documents",
       "sheet": "Mes feuilles de calcul",
       "slide": "Mes présentations",
-      "excalidraw": "Mes tableaux"
+      "excalidraw": "Mes tableaux",
+      "documents": "Documents"
     },
     "empty": {
       "welcome": "Bienvenue sur %{app}",
@@ -903,13 +906,15 @@
         "text": "Une fois votre document créé, il vous est possible de le retrouver dans ",
         "sheet": "Une fois votre feuille de calcul créée, il vous est possible de la retrouver dans ",
         "slide": "Une fois votre présentation créée, il vous est possible de la retrouver dans ",
-        "excalidraw": "Une fois votre board créé, il vous est possible de le retrouver dans "
+        "excalidraw": "Une fois votre board créé, il vous est possible de le retrouver dans ",
+        "documents": "Une fois votre document créé, il vous est possible de le retrouver dans "
       },
       "create": {
         "text": "Créer un document",
         "sheet": "Créer une feuille de calcul",
         "slide": "Créer une présentation",
-        "excalidraw": "Créer un board"
+        "excalidraw": "Créer un board",
+        "documents": "Créer un document"
       }
     }
   },
@@ -1121,7 +1126,8 @@
       "text": "%{name} n'est pas un document, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des documents, ils n'ont pas été ajoutés.",
       "sheet": "%{name} n'est pas un tableur, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des tableurs, ils n'ont pas été ajoutés.",
       "slide": "%{name} n'est pas une présentation, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des présentations, ils n'ont pas été ajoutés.",
-      "excalidraw": "%{name} n'est pas un tableau Board, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des tableaux Board, ils n'ont pas été ajoutés."
+      "excalidraw": "%{name} n'est pas un tableau Board, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des tableaux Board, ils n'ont pas été ajoutés.",
+      "documents": "%{name} n'est pas un document, un tableur, une présentation ou un PDF, il n'a pas été ajouté. |||| %{smart_count} fichiers ne sont pas des documents, ils n'ont pas été ajoutés."
     },
     "error": "Les fichiers n'ont pas pu être ajoutés."
   },
@@ -1161,6 +1167,30 @@
         "doing": "En cours",
         "done": "Terminé"
       }
+    }
+  },
+  "DocumentsHome": {
+    "create_title": "Créer",
+    "create": {
+      "text": "Document",
+      "sheet": "Tableur",
+      "slide": "Présentation"
+    },
+    "import": "Importer des fichiers",
+    "filters": "Type de document",
+    "filter": {
+      "all": "Tous",
+      "text": "Documents",
+      "sheet": "Tableurs",
+      "slide": "Présentations",
+      "pdf": "PDF"
+    },
+    "no_file": {
+      "all": "Tes documents, tableurs, présentations et PDF s'afficheront ici.",
+      "text": "Aucun document récent.",
+      "sheet": "Aucun tableur récent.",
+      "slide": "Aucune présentation récente.",
+      "pdf": "Aucun PDF récent."
     }
   }
 }

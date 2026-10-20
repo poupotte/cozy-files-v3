@@ -883,19 +883,22 @@
       "text": "Documents created by me",
       "sheet": "Spreadsheets created by me",
       "slide": "Presentations created by me",
-      "excalidraw": "Boards created by me"
+      "excalidraw": "Boards created by me",
+      "documents": "Documents created by me"
     },
     "title": {
       "text": "Latest documents",
       "sheet": "Latest spreadsheets",
       "slide": "Latest presentations",
-      "excalidraw": "Latest boards"
+      "excalidraw": "Latest boards",
+      "documents": "Latest documents"
     },
     "title_home": {
       "text": "My documents",
       "sheet": "My spreadsheets",
       "slide": "My presentations",
-      "excalidraw": "My boards"
+      "excalidraw": "My boards",
+      "documents": "Documents"
     },
     "empty": {
       "welcome": "Welcome on %{app}",
@@ -903,13 +906,15 @@
         "text": "Once your document is created, you can find it in your ",
         "sheet": "Once your spreadsheet is created, you can find it in your ",
         "slide": "Once your presentation is created, you can find it in your ",
-        "excalidraw": "Once your board is created, you can find it in your "
+        "excalidraw": "Once your board is created, you can find it in your ",
+        "documents": "Once your document is created, you can find it in "
       },
       "create": {
         "text": "Create a document",
         "sheet": "Create a spreadsheet",
         "slide": "Create a presentation",
-        "excalidraw": "Create a board"
+        "excalidraw": "Create a board",
+        "documents": "Create a document"
       }
     }
   },
@@ -1121,7 +1126,8 @@
       "text": "%{name} is not a document, it was not added. |||| %{smart_count} files are not documents, they were not added.",
       "sheet": "%{name} is not a spreadsheet, it was not added. |||| %{smart_count} files are not spreadsheets, they were not added.",
       "slide": "%{name} is not a presentation, it was not added. |||| %{smart_count} files are not presentations, they were not added.",
-      "excalidraw": "%{name} is not a board, it was not added. |||| %{smart_count} files are not boards, they were not added."
+      "excalidraw": "%{name} is not a board, it was not added. |||| %{smart_count} files are not boards, they were not added.",
+      "documents": "%{name} is not a document, spreadsheet, presentation or PDF, it was not added. |||| %{smart_count} files are not documents, they were not added."
     },
     "error": "The files could not be added."
   },
@@ -1161,6 +1167,30 @@
         "doing": "In progress",
         "done": "Done"
       }
+    }
+  },
+  "DocumentsHome": {
+    "create_title": "Create",
+    "create": {
+      "text": "Document",
+      "sheet": "Spreadsheet",
+      "slide": "Presentation"
+    },
+    "import": "Import files",
+    "filters": "Document type",
+    "filter": {
+      "all": "All",
+      "text": "Documents",
+      "sheet": "Spreadsheets",
+      "slide": "Presentations",
+      "pdf": "PDF"
+    },
+    "no_file": {
+      "all": "Your documents, spreadsheets, presentations and PDF will show here.",
+      "text": "No recent document.",
+      "sheet": "No recent spreadsheet.",
+      "slide": "No recent presentation.",
+      "pdf": "No recent PDF."
     }
   }
 }

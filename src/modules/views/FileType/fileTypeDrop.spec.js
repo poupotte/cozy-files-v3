@@ -32,6 +32,22 @@ describe('sortDroppedFiles', () => {
     })
   })
 
+  it('accepts every document on the Documents page', () => {
+    const files = [
+      'Report.docx',
+      'Budget.ods',
+      'Pitch.pptx',
+      'Invoice.pdf'
+    ].map(name => makeFile(name))
+
+    expect(
+      sortDroppedFiles(
+        files.map(file => entry(file)),
+        'documents'
+      )
+    ).toEqual({ accepted: files, rejected: [] })
+  })
+
   it('refuses the files of another type and the folders', () => {
     const report = makeFile('Report.docx')
     const entries = [

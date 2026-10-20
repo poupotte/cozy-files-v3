@@ -22,8 +22,10 @@ import { useFileLink } from '@/modules/navigation/hooks/useFileLink'
  * @param {object} props.file - The io.cozy.files doc
  * @param {object[]} props.actions - Actions of the page, from makeActions
  * @param {string} props.fileType - Type of the page (text, sheet or slide)
+ * @param {React.ReactNode} [props.preview] - Preview shown instead of the
+ *   content of the file, as the pages of a PDF
  */
-export const OfficeCard = ({ file, actions, fileType }) => {
+export const OfficeCard = ({ file, actions, fileType, preview }) => {
   const { t } = useI18n()
   const { openLink } = useFileLink(file)
   const anchorRef = useRef(null)
@@ -47,7 +49,7 @@ export const OfficeCard = ({ file, actions, fileType }) => {
         onClick={openLink}
         aria-label={t('BoardHome.open', { name: filename })}
       >
-        <OfficePreview file={file} shape={fileType} />
+        {preview ?? <OfficePreview file={file} shape={fileType} />}
         <span className={boardStyles['boardCard-name']}>{filename}</span>
         {updatedAt && (
           <span className={boardStyles['boardCard-date']}>

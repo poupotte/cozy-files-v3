@@ -22,6 +22,8 @@ import styles from './board.styl'
  * @param {Function} [props.Card] - Tile of a file, for the Office pages
  * @param {object} [props.cardProps] - Extra props of each tile
  * @param {string} [props.emptyLabel] - Text shown without any file
+ * @param {React.ReactNode} [props.toolbar] - Shown under the title, as
+ *   filters of the files
  */
 export const BoardGrid = ({
   result,
@@ -32,7 +34,8 @@ export const BoardGrid = ({
   seeAllPath,
   Card = BoardCard,
   cardProps,
-  emptyLabel
+  emptyLabel,
+  toolbar
 }) => {
   const { t } = useI18n()
   const navigate = useNavigate()
@@ -55,6 +58,7 @@ export const BoardGrid = ({
           )}
         </div>
       )}
+      {toolbar}
       {isLoading && <Spinner size="xxlarge" middle />}
       {!isLoading && files.length === 0 && (
         <p className={styles['boardGrid-empty']} data-testid="board-grid-empty">

@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Navigate, Outlet, useParams } from 'react-router-dom'
 
 import flag from 'cozy-flags'
@@ -14,6 +14,11 @@ import { BoardCreateStrip } from './Board/BoardCreateStrip'
 import { BoardGrid } from './Board/BoardGrid'
 import { BoardPreview } from './Board/BoardPreview'
 import boardStyles from './Board/board.styl'
+import { DocumentCard } from './Documents/DocumentCard'
+import { DocumentsCreateStrip } from './Documents/DocumentsCreateStrip'
+import { DocumentsFilters } from './Documents/DocumentsFilters'
+import { filterDocuments } from './Documents/documentKinds'
+import { useCreateDocument } from './Documents/useCreateDocument'
 import { FileTypeDropzone } from './FileTypeDropzone'
 import { FileTypeEmpty } from './FileTypeEmpty'
 import { FileTypeHeader } from './FileTypeHeader'
@@ -43,6 +48,7 @@ import {
 import { useCreateFileTypeFile } from './useCreateFileTypeFile'
 import { useFileTypeFavicon } from './useFileTypeFavicon'
 import { useFileTypeFiles } from './useFileTypeFiles'
+import { useFileTypeUpload } from './useFileTypeUpload'
 import FolderView from '../Folder/FolderView'
 import FolderViewBody from '../Folder/FolderViewBody'
 import FolderViewBodyVz from '../Folder/virtualized/FolderViewBody'
@@ -101,10 +107,13 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
     () => ({
       ...typedFiles,
       data: (typedFiles.data ?? []).filter(
-        file => !isUserTemplate(file, fileType)
+        file =>
+          !(page.createTypes ?? [fileType]).some(type =>
+            isUserTemplate(file, type)
+          )
       )
     }),
-    [typedFiles, fileType]
+    [typedFiles, fileType, page]
   )
   const userTemplates = useUserTemplates(fileType)
   const hiddenTemplates = useHiddenTemplates(fileType)
@@ -136,6 +145,12 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
     editTemplate,
     isCreating
   } = useCreateFileTypeFile(fileType, page)
+
+  // The Documents page creates the files of the Office pages, in their
+  // folders, and imports any document in its own.
+  const { createDocument, isCreating: isCreatingDocument } = useCreateDocument()
+  const importDocuments = useFileTypeUpload(fileType, page, refreshFiles)
+  const [documentFilter, setDocumentFilter] = useState('all')
 
   const removeUserTemplate = async template => {
     try {
@@ -279,7 +294,7 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
       hr,
       versions,
       hr,
-      ...(page.home ? [saveAsTemplate, hr] : []),
+      ...(page.home && !page.createTypes ? [saveAsTemplate, hr] : []),
       trash
     ],
     actionsOptions
@@ -304,7 +319,15 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
         )}
         {isOnHome ? (
           <div className={boardStyles['boardHome']}>
-            {home === 'office' ? (
+            {home === 'documents' ? (
+              <DocumentsCreateStrip
+                createTypes={page.createTypes}
+                onCreate={createDocument}
+                onImport={importDocuments}
+                canCreate={page.canCreate()}
+                isCreating={isCreatingDocument}
+              />
+            ) : home === 'office' ? (
               <OfficeCreateStrip
                 fileType={fileType}
                 onCreate={createFile}
@@ -320,10 +343,24 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
             )}
             <BoardGrid
               result={result}
-              files={filteredResult.data ?? []}
+              files={
+                home === 'documents'
+                  ? filterDocuments(filteredResult.data ?? [], documentFilter)
+                  : (filteredResult.data ?? [])
+              }
               actions={actions}
               title={base.t('BoardHome.list_title')}
               limit={HOME_LIMIT}
+              {...(home === 'documents' && {
+                Card: DocumentCard,
+                toolbar: (
+                  <DocumentsFilters
+                    value={documentFilter}
+                    onChange={setDocumentFilter}
+                  />
+                ),
+                emptyLabel: base.t(`DocumentsHome.no_file.${documentFilter}`)
+              })}
               {...(home === 'office' && {
                 Card: OfficeCard,
                 cardProps: { fileType },

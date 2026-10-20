@@ -82,6 +82,23 @@ function SvgPresentationApp(props) {
   )
 }
 
+// Documents page: a document over another, for every kind of document.
+function SvgDocumentsApp(props) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" {...props}>
+      <rect width={21} height={26} x={9} y={1} fill="#A9C4FF" rx={4} />
+      <path
+        fill="#2F6FED"
+        d="M7 5h11l7 7v15a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a4 4 0 0 1 4-4Z"
+      />
+      <path fill="#1F57C9" d="M18 5l7 7h-4a3 3 0 0 1-3-3V5Z" />
+      <rect width={13} height={2.4} x={7} y={15} fill="#fff" rx={1.2} />
+      <rect width={13} height={2.4} x={7} y={19.5} fill="#fff" rx={1.2} />
+      <rect width={9} height={2.4} x={7} y={24} fill="#fff" rx={1.2} />
+    </svg>
+  )
+}
+
 // The bar renders the app name as an icon next to "Twake", 22px high like
 // DriveText. Plain text keeps the names readable without outlined glyphs.
 const makeAppText = (name, fromColor, toColor) => {
@@ -133,3 +150,5 @@ export const PresentationAppText = makeAppText(
 )
 export const BoardApp = IconExcalidraw
 export const BoardAppText = makeAppText('Board', '#6965DB', '#5B57D1')
+export const DocumentsApp = SvgDocumentsApp
+export const DocumentsAppText = makeAppText('Documents', '#2F6FED', '#1F57C9')

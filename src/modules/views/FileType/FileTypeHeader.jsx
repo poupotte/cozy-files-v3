@@ -4,6 +4,7 @@ import React from 'react'
 import Button from 'cozy-ui/transpiled/react/Buttons'
 import { useI18n } from 'twake-i18n'
 
+import { DocumentsCreateMenu } from './Documents/DocumentsCreateMenu'
 import { useCreateFileTypeFile } from './useCreateFileTypeFile'
 import FolderViewHeader from '../Folder/FolderViewHeader'
 
@@ -38,6 +39,15 @@ export const FileTypeHeader = ({
 }) => {
   const { t } = useI18n()
   const { createFile, isCreating } = useCreateFileTypeFile(fileType, page)
+  const renderCreateButton = ({ onClick, busy }) => (
+    <Button
+      variant="primary"
+      startIcon={<Icon icon={Plus} size={12} />}
+      label={t('toolbar.menu_create')}
+      busy={busy}
+      onClick={onClick}
+    />
+  )
 
   return (
     <FolderViewHeader>
@@ -49,15 +59,16 @@ export const FileTypeHeader = ({
       {!isMobile && tabs}
       <div className="u-flex u-flex-items-center u-ml-auto">
         {!isMobile && withViewSwitcher && <ViewSwitcher />}
-        {isMobile && canCreate && (
-          <Button
-            variant="primary"
-            startIcon={<Icon icon={Plus} size={12} />}
-            label={t('toolbar.menu_create')}
-            busy={isCreating}
-            onClick={createFile}
-          />
-        )}
+        {isMobile &&
+          canCreate &&
+          (page.createTypes ? (
+            <DocumentsCreateMenu
+              createTypes={page.createTypes}
+              renderButton={renderCreateButton}
+            />
+          ) : (
+            renderCreateButton({ onClick: createFile, busy: isCreating })
+          ))}
       </div>
     </FolderViewHeader>
   )

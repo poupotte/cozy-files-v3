@@ -156,8 +156,17 @@
     color var(--secondaryTextColor)
 
 .boardCard-menu
-    position absolute
-    top .5rem
-    right .5rem
-    background-color var(--paperBackgroundColor) !important
-    box-shadow var(--shadow1)
+    // As in the grid view of the folders: dots standing in the top right
+    // corner, with no button around them until hovered.
+    position absolute !important
+    top .25rem
+    right .25rem
+    color var(--secondaryTextColor) !important
+
+    svg
+        transform rotate(90deg)
+
+    &:hover,
+    &:focus-visible
+        background-color var(--paperBackgroundColor) !important
+        box-shadow var(--shadow1)

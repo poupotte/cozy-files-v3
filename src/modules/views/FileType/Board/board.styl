@@ -121,10 +121,6 @@
 .boardCard
     position relative
 
-    &:hover .boardCard-menu,
-    &:focus-within .boardCard-menu
-        opacity 1
-
     &:hover .boardPreview
         border-color var(--primaryColor)
         box-shadow var(--shadow2)
@@ -163,12 +159,5 @@
     position absolute
     top .5rem
     right .5rem
-    opacity 0
     background-color var(--paperBackgroundColor) !important
     box-shadow var(--shadow1)
-    transition opacity .15s
-
-// Touch screens have no hover: keep the menu in sight.
-@media (hover: none)
-    .boardCard-menu
-        opacity 1

@@ -30,4 +30,35 @@ describe('BoardCreateStrip', () => {
 
     expect(onCreate).not.toHaveBeenCalled()
   })
+
+  it('edits a template of the page from its id', () => {
+    const onEditTemplate = jest.fn()
+    render(
+      <BoardCreateStrip
+        onCreate={jest.fn()}
+        isCreating={false}
+        onEditTemplate={onEditTemplate}
+      />
+    )
+
+    fireEvent.click(screen.getAllByTestId('user-template-edit')[1])
+
+    expect(onEditTemplate).toHaveBeenCalledWith('kanban')
+  })
+
+  it('shows the template the user edited in place of the original', () => {
+    render(
+      <BoardCreateStrip
+        onCreate={jest.fn()}
+        isCreating={false}
+        renderCustomizedTemplate={id =>
+          id === 'kanban' ? <li key={id} data-testid="my-kanban" /> : null
+        }
+      />
+    )
+
+    expect(screen.queryByTestId('board-template-kanban')).toBe(null)
+    expect(screen.queryByTestId('my-kanban')).toBeInTheDocument()
+    expect(screen.queryByTestId('board-template-mindmap')).toBeInTheDocument()
+  })
 })

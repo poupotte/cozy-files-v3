@@ -22,10 +22,16 @@ import { OfficeCard } from './Office/OfficeCard'
 import { OfficeCreateStrip } from './Office/OfficeCreateStrip'
 import { OfficePreview } from './Office/OfficePreview'
 import officeStyles from './Office/office.styl'
-import { UserTemplateTiles } from './UserTemplates/UserTemplateTiles'
+import {
+  UserTemplateTile,
+  UserTemplateTiles
+} from './UserTemplates/UserTemplateTiles'
 import { saveAsTemplate } from './UserTemplates/saveAsTemplate'
 import { useUserTemplates } from './UserTemplates/useUserTemplates'
-import { isUserTemplate } from './UserTemplates/userTemplates'
+import {
+  getReplacedTemplateId,
+  isUserTemplate
+} from './UserTemplates/userTemplates'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
   FILE_TYPE_SECTION_RECENT,
@@ -142,31 +148,64 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
     userTemplates.refresh()
   }
 
-  const userTemplateTiles = (
-    <UserTemplateTiles
-      templates={userTemplates.templates}
-      renderPreview={template =>
-        home === 'office' ? (
-          <OfficePreview file={template} shape={fileType} />
-        ) : (
-          <BoardPreview file={template} />
-        )
+  // A template of the page the user edited shows its copy in its place,
+  // the latest one if several.
+  const { customizedTemplates, ownTemplates } = useMemo(() => {
+    const customized = new Map()
+    const own = []
+    for (const template of userTemplates.templates) {
+      const templateId = getReplacedTemplateId(template, fileType)
+      if (templateId && !customized.has(templateId)) {
+        customized.set(templateId, template)
+      } else {
+        own.push(template)
       }
-      newTemplateClassName={
-        home === 'office'
-          ? cx(
-              officeStyles['officeBlank'],
-              officeStyles[`officePreview--${fileType}`]
-            )
-          : boardStyles['boardTemplate-blank']
-      }
-      onCreate={createFromTemplateFile}
-      onCreateTemplate={page.canCreate() ? createTemplate : undefined}
-      onEdit={editTemplate}
-      onRemove={removeUserTemplate}
-      isCreating={isCreating}
-    />
-  )
+    }
+    return { customizedTemplates: customized, ownTemplates: own }
+  }, [userTemplates.templates, fileType])
+
+  const userTemplateTileProps = {
+    renderPreview: template =>
+      home === 'office' ? (
+        <OfficePreview file={template} shape={fileType} />
+      ) : (
+        <BoardPreview file={template} />
+      ),
+    onCreate: createFromTemplateFile,
+    onEdit: editTemplate,
+    onRemove: removeUserTemplate,
+    isCreating
+  }
+  const canCreateTemplate = page.canCreate()
+
+  const templateStripProps = {
+    userTemplates: (
+      <UserTemplateTiles
+        templates={ownTemplates}
+        newTemplateClassName={
+          home === 'office'
+            ? cx(
+                officeStyles['officeBlank'],
+                officeStyles[`officePreview--${fileType}`]
+              )
+            : boardStyles['boardTemplate-blank']
+        }
+        onCreateTemplate={canCreateTemplate ? createTemplate : undefined}
+        {...userTemplateTileProps}
+      />
+    ),
+    onEditTemplate: canCreateTemplate ? createTemplate : undefined,
+    renderCustomizedTemplate: templateId => {
+      const template = customizedTemplates.get(templateId)
+      return template ? (
+        <UserTemplateTile
+          key={templateId}
+          template={template}
+          {...userTemplateTileProps}
+        />
+      ) : null
+    }
+  }
 
   useKeyboardShortcuts({
     client: base.client,
@@ -241,13 +280,13 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
                 fileType={fileType}
                 onCreate={createFile}
                 isCreating={isCreating}
-                userTemplates={userTemplateTiles}
+                {...templateStripProps}
               />
             ) : (
               <BoardCreateStrip
                 onCreate={createFile}
                 isCreating={isCreating}
-                userTemplates={userTemplateTiles}
+                {...templateStripProps}
               />
             )}
             <BoardGrid

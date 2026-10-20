@@ -3,6 +3,7 @@ import { uploadFileWithConflictStrategy } from 'cozy-client/dist/models/file'
 import {
   createFromUserTemplate,
   createUserTemplate,
+  getReplacedTemplateId,
   getUserTemplateReference,
   isUserTemplate,
   saveAsUserTemplate
@@ -13,6 +14,10 @@ jest.mock('cozy-client/dist/models/file', () => ({
   uploadFileWithConflictStrategy: jest.fn(async (client, content, options) => ({
     data: { id: 'new-template', name: options.name, dir_id: options.dirId }
   }))
+}))
+jest.mock('../Board/boardTemplates', () => ({
+  getBoardTemplate: id => (id === 'kanban' ? { id } : null),
+  makeTemplateElements: async () => [{ id: 'column' }]
 }))
 jest.mock('../fileTypeFolder', () => ({
   ensureFileTypeFolder: async () => ({ _id: 'board-dir', path: '/Board' })
@@ -125,5 +130,44 @@ describe('createUserTemplate', () => {
     expect(client.files.addReferencedBy).toHaveBeenCalledWith(template, [
       reference
     ])
+  })
+})
+
+describe('editing a template of the page', () => {
+  const kanbanReference = {
+    _type: 'io.cozy.apps',
+    _id: `${reference._id}/kanban`
+  }
+
+  it('copies it in the Templates folder, in its place', async () => {
+    uploadFileWithConflictStrategy.mockClear()
+    const client = makeClient()
+
+    const template = await createUserTemplate({
+      client,
+      fileType: 'excalidraw',
+      page: {},
+      t: key => key,
+      templateId: 'kanban'
+    })
+
+    const [, content, options] = uploadFileWithConflictStrategy.mock.calls[0]
+    expect(JSON.parse(content).elements).toEqual([{ id: 'column' }])
+    expect(options.name).toBe('BoardHome.templates.kanban.name.excalidraw')
+    expect(client.files.addReferencedBy).toHaveBeenCalledWith(template, [
+      reference,
+      kanbanReference
+    ])
+  })
+
+  it('finds the template of the page a template takes the place of', () => {
+    const toReference = ({ _type, _id }) => ({ type: _type, id: _id })
+    const custom = {
+      referenced_by: [toReference(reference), toReference(kanbanReference)]
+    }
+    const own = { referenced_by: [toReference(reference)] }
+
+    expect(getReplacedTemplateId(custom, 'excalidraw')).toBe('kanban')
+    expect(getReplacedTemplateId(own, 'excalidraw')).toBe(null)
   })
 })

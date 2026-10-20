@@ -6,6 +6,7 @@ import { useI18n } from 'twake-i18n'
 import { BoardPreview } from './BoardPreview'
 import styles from './board.styl'
 import { BOARD_TEMPLATES, makeTemplateElements } from './boardTemplates'
+import { PageTemplateTile } from '../UserTemplates/UserTemplateTiles'
 
 import logger from '@/lib/logger'
 
@@ -48,8 +49,18 @@ const useTemplateElements = () => {
  * @param {boolean} props.isCreating - Whether a board is being created
  * @param {React.ReactNode} [props.userTemplates] - Tiles of the templates the
  *   user saved, shown after the others
+ * @param {Function} [props.onEditTemplate] - Edits a template of the page,
+ *   from its id
+ * @param {Function} [props.renderCustomizedTemplate] - Tile of the template
+ *   the user saved in place of a template of the page, from its id, or null
  */
-export const BoardCreateStrip = ({ onCreate, isCreating, userTemplates }) => {
+export const BoardCreateStrip = ({
+  onCreate,
+  isCreating,
+  userTemplates,
+  onEditTemplate,
+  renderCustomizedTemplate
+}) => {
   const { t } = useI18n()
   const elementsById = useTemplateElements()
 
@@ -75,26 +86,33 @@ export const BoardCreateStrip = ({ onCreate, isCreating, userTemplates }) => {
             </span>
           </button>
         </li>
-        {BOARD_TEMPLATES.map(({ id }) => (
-          <li key={id}>
-            <button
-              type="button"
-              className={styles['boardTemplate']}
-              disabled={isCreating}
-              onClick={() => onCreate(id)}
-              data-testid={`board-template-${id}`}
-            >
-              {elementsById[id] ? (
-                <BoardPreview elements={elementsById[id]} />
-              ) : (
-                <span className={styles['boardPreview']} />
-              )}
-              <span className={styles['boardTemplate-name']}>
-                {t(`BoardHome.templates.${id}.name`)}
-              </span>
-            </button>
-          </li>
-        ))}
+        {BOARD_TEMPLATES.map(({ id }) => {
+          const name = t(`BoardHome.templates.${id}.name`)
+          return (
+            renderCustomizedTemplate?.(id) ?? (
+              <PageTemplateTile
+                key={id}
+                name={name}
+                onEdit={onEditTemplate && (() => onEditTemplate(id))}
+              >
+                <button
+                  type="button"
+                  className={styles['boardTemplate']}
+                  disabled={isCreating}
+                  onClick={() => onCreate(id)}
+                  data-testid={`board-template-${id}`}
+                >
+                  {elementsById[id] ? (
+                    <BoardPreview elements={elementsById[id]} />
+                  ) : (
+                    <span className={styles['boardPreview']} />
+                  )}
+                  <span className={styles['boardTemplate-name']}>{name}</span>
+                </button>
+              </PageTemplateTile>
+            )
+          )
+        })}
         {userTemplates}
       </ul>
     </section>

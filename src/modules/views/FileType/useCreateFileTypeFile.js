@@ -90,16 +90,26 @@ export const useCreateFileTypeFile = (fileType, page) => {
     [client, fileType, openInEditor, page]
   )
 
-  const createTemplate = useCallback(async () => {
-    setIsCreating(true)
-    try {
-      const template = await createUserTemplate({ client, fileType, page, t })
-      openInEditor(template)
-    } catch (error) {
-      logger.error(`Could not create a ${fileType} template`, error)
-      setIsCreating(false)
-    }
-  }, [client, fileType, openInEditor, page, t])
+  // An empty template, or a copy of a template of the page to edit it.
+  const createTemplate = useCallback(
+    async (templateId = null) => {
+      setIsCreating(true)
+      try {
+        const template = await createUserTemplate({
+          client,
+          fileType,
+          page,
+          t,
+          templateId
+        })
+        openInEditor(template)
+      } catch (error) {
+        logger.error(`Could not create a ${fileType} template`, error)
+        setIsCreating(false)
+      }
+    },
+    [client, fileType, openInEditor, page, t]
+  )
 
   return {
     createFile,

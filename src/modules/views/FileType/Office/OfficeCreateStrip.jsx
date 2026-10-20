@@ -11,6 +11,7 @@ import {
   makeOfficeTemplatePreview
 } from './officeTemplates'
 import boardStyles from '../Board/board.styl'
+import { PageTemplateTile } from '../UserTemplates/UserTemplateTiles'
 
 /**
  * Create block of an Office page home, as the Google Docs template gallery: a
@@ -24,12 +25,18 @@ import boardStyles from '../Board/board.styl'
  * @param {boolean} props.isCreating - Whether a file is being created
  * @param {React.ReactNode} [props.userTemplates] - Tiles of the templates the
  *   user saved, shown after the others
+ * @param {Function} [props.onEditTemplate] - Edits a template of the page,
+ *   from its id
+ * @param {Function} [props.renderCustomizedTemplate] - Tile of the template
+ *   the user saved in place of a template of the page, from its id, or null
  */
 export const OfficeCreateStrip = ({
   fileType,
   onCreate,
   isCreating,
-  userTemplates
+  userTemplates,
+  onEditTemplate,
+  renderCustomizedTemplate
 }) => {
   const { t } = useI18n()
 
@@ -63,25 +70,34 @@ export const OfficeCreateStrip = ({
             </span>
           </button>
         </li>
-        {getOfficeTemplateIds(fileType).map(id => (
-          <li key={id}>
-            <button
-              type="button"
-              className={boardStyles['boardTemplate']}
-              disabled={isCreating}
-              onClick={() => onCreate(id)}
-              data-testid={`office-template-${id}`}
-            >
-              <OfficeTemplatePreview
-                fileType={fileType}
-                preview={makeOfficeTemplatePreview(fileType, id, t)}
-              />
-              <span className={boardStyles['boardTemplate-name']}>
-                {t(`OfficeHome.templates.${id}.name`)}
-              </span>
-            </button>
-          </li>
-        ))}
+        {getOfficeTemplateIds(fileType).map(id => {
+          const name = t(`OfficeHome.templates.${id}.name`)
+          return (
+            renderCustomizedTemplate?.(id) ?? (
+              <PageTemplateTile
+                key={id}
+                name={name}
+                onEdit={onEditTemplate && (() => onEditTemplate(id))}
+              >
+                <button
+                  type="button"
+                  className={boardStyles['boardTemplate']}
+                  disabled={isCreating}
+                  onClick={() => onCreate(id)}
+                  data-testid={`office-template-${id}`}
+                >
+                  <OfficeTemplatePreview
+                    fileType={fileType}
+                    preview={makeOfficeTemplatePreview(fileType, id, t)}
+                  />
+                  <span className={boardStyles['boardTemplate-name']}>
+                    {name}
+                  </span>
+                </button>
+              </PageTemplateTile>
+            )
+          )
+        })}
         {userTemplates}
       </ul>
     </section>

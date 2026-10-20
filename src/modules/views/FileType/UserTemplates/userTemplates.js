@@ -4,6 +4,8 @@ import {
   uploadFileWithConflictStrategy
 } from 'cozy-client/dist/models/file'
 
+import { getBoardTemplate, makeTemplateElements } from '../Board/boardTemplates'
+import { applyOfficeTemplate } from '../Office/officeTemplates'
 import { ensureFileTypeFolder } from '../fileTypeFolder'
 
 import { TRASH_DIR_PATH } from '@/constants/config'
@@ -26,8 +28,38 @@ export const getUserTemplateReference = fileType => ({
   _id: `io.cozy.apps/drive/${fileType}/template`
 })
 
+// A template of the page the user edited is a template the user saved that
+// takes its place, found by a second reference naming it.
+const getReplacedTemplateReference = (fileType, templateId) => ({
+  _type: 'io.cozy.apps',
+  _id: `${getUserTemplateReference(fileType)._id}/${templateId}`
+})
+
 const getReferences = file =>
   file.referenced_by ?? file.relationships?.referenced_by?.data ?? []
+
+/**
+ * Id of the template of the page a template the user saved takes the place
+ * of, or null when it is a template of their own.
+ * @param {object} file - A template the user saved
+ * @param {string} fileType - Type of the page
+ * @returns {string|null}
+ */
+export const getReplacedTemplateId = (file, fileType) => {
+  const prefix = `${getUserTemplateReference(fileType)._id}/`
+  const reference = getReferences(file).find(
+    ({ type, id }) => type === 'io.cozy.apps' && id?.startsWith(prefix)
+  )
+  return reference ? reference.id.slice(prefix.length) : null
+}
+
+const getTemplateReferences = (file, fileType) => {
+  const templateId = getReplacedTemplateId(file, fileType)
+  return [
+    getUserTemplateReference(fileType),
+    ...(templateId ? [getReplacedTemplateReference(fileType, templateId)] : [])
+  ]
+}
 
 /**
  * Whether a file is a template the user saved, so that it is offered in the
@@ -102,12 +134,14 @@ const OFFICE_CLASS_BY_FILE_TYPE = {
   slide: 'slide'
 }
 
-// Content of an empty file of the type: the blank OnlyOffice file, or an
-// empty scene for a board.
-const makeBlankFile = async (client, fileType) => {
+// Content of an empty file of the type, the blank OnlyOffice file or an
+// empty scene for a board, or of a template of the page.
+const makeTemplateFile = async (client, fileType, templateId, t) => {
   const fileClass = OFFICE_CLASS_BY_FILE_TYPE[fileType]
   if (!fileClass) {
     const scene = makeEmptyScene(client.getStackClient().uri)
+    const template = getBoardTemplate(templateId)
+    if (template) scene.elements = await makeTemplateElements(template, t)
     return {
       content: JSON.stringify(scene),
       extension: EXCALIDRAW_EXTENSION,
@@ -117,26 +151,49 @@ const makeBlankFile = async (client, fileType) => {
   const extension = makeExtByClass(fileClass)
   const response = await fetch(`/onlyOffice/${fileClass}.${extension}`)
   if (!response.ok) throw new Error(`No blank ${fileClass} file`)
+  const blank = await response.arrayBuffer()
   return {
-    content: await response.arrayBuffer(),
+    content: templateId
+      ? applyOfficeTemplate(blank, fileType, templateId, t)
+      : blank,
     extension,
     contentType: makeMimeByClass(fileClass)
   }
 }
 
+// Name of a template of the page, as its tile shows it.
+const getTemplateName = (fileType, templateId, t) =>
+  OFFICE_CLASS_BY_FILE_TYPE[fileType]
+    ? t(`OfficeHome.templates.${templateId}.name`)
+    : t(`BoardHome.templates.${templateId}.name`)
+
 /**
- * Creates an empty template of a type, to be filled in its editor, as the
- * "New template" of the Google Docs template gallery.
+ * Creates a template of a type, to be filled in its editor: an empty one, as
+ * the "New template" of the Google Docs template gallery, or a copy of a
+ * template of the page, which then takes its place.
+ * @param {object} options - Options
+ * @param {string} [options.templateId] - Template of the page to copy
  * @returns {Promise<object>} The template
  */
-export const createUserTemplate = async ({ client, fileType, page, t }) => {
+export const createUserTemplate = async ({
+  client,
+  fileType,
+  page,
+  t,
+  templateId = null
+}) => {
   const folder = await ensureUserTemplatesFolder(client, fileType, page, t)
-  const { content, extension, contentType } = await makeBlankFile(
+  const { content, extension, contentType } = await makeTemplateFile(
     client,
-    fileType
+    fileType,
+    templateId,
+    t
   )
+  const name = templateId
+    ? getTemplateName(fileType, templateId, t)
+    : t('UserTemplates.new_name')
   const { data } = await uploadFileWithConflictStrategy(client, content, {
-    name: `${t('UserTemplates.new_name')}.${extension}`,
+    name: `${name}.${extension}`,
     dirId: folder._id,
     conflictStrategy: 'rename',
     contentType
@@ -144,7 +201,12 @@ export const createUserTemplate = async ({ client, fileType, page, t }) => {
   const template = { ...data, _id: data._id ?? data.id, _type: 'io.cozy.files' }
   await client
     .collection('io.cozy.files')
-    .addReferencedBy(template, [getUserTemplateReference(fileType)])
+    .addReferencedBy(template, [
+      getUserTemplateReference(fileType),
+      ...(templateId
+        ? [getReplacedTemplateReference(fileType, templateId)]
+        : [])
+    ])
   return template
 }
 
@@ -194,7 +256,7 @@ export const createFromUserTemplate = async ({
   if (isUserTemplate(file, fileType)) {
     await client
       .collection('io.cozy.files')
-      .removeReferencedBy(file, [getUserTemplateReference(fileType)])
+      .removeReferencedBy(file, getTemplateReferences(file, fileType))
   }
   return file
 }

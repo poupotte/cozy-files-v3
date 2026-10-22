@@ -927,11 +927,6 @@
       "sheet": "Blank spreadsheet",
       "slide": "Blank presentation"
     },
-    "no_file": {
-      "text": "Your documents will show here.",
-      "sheet": "Your spreadsheets will show here.",
-      "slide": "Your presentations will show here."
-    },
     "sheet_count": "%{smart_count} sheet |||| %{smart_count} sheets",
     "slide_count": "%{smart_count} slide |||| %{smart_count} slides",
     "templates": {

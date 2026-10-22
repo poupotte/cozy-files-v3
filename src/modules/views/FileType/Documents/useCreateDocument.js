@@ -7,8 +7,7 @@ const SLIDE_PAGE = getFileTypePage('slide')
 
 /**
  * Creates a document, a spreadsheet or a presentation from the Documents
- * page, in the folder of its own page, the editor going back to the
- * Documents page.
+ * page, in the Documents folder, the editor going back to the Documents page.
  * @returns {{ createDocument: Function, isCreating: boolean }}
  */
 export const useCreateDocument = () => {

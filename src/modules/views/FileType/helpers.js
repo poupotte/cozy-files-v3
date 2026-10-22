@@ -16,12 +16,13 @@ import {
 } from '@/modules/views/Excalidraw/helpers'
 import { canWriteOfficeDocument } from '@/modules/views/OnlyOffice/helpers'
 
-// The Office pages share their home and their pick of the list or grid view,
-// the list being their default.
+// The Office types are no longer pages of their own: the Documents page lists
+// their files and creates them, from their templates, in their folders.
 const OFFICE_HOME = {
   home: 'office',
   defaultViewType: 'list',
-  viewTypeSetting: 'preferredOfficeViewType'
+  viewTypeSetting: 'preferredOfficeViewType',
+  openedIn: 'documents'
 }
 
 // Pages opened by the Home entrypoints (see manifest.webapp): the recent
@@ -43,6 +44,7 @@ const OFFICE_HOME = {
 //   a section of their own
 // - createTypes: pages whose files the page creates, for a page listing the
 //   files of several types, instead of a file of its own
+// - openedIn: page shown instead, for a type with no page of its own
 export const FILE_TYPE_PAGES = {
   text: {
     classes: ['text', 'document'],

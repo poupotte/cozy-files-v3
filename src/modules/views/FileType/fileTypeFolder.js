@@ -1,6 +1,8 @@
 import { Q } from 'cozy-client'
 import { createFolderWithReference } from 'cozy-client/dist/models/folder'
 
+import { getFileTypePage } from './helpers'
+
 import { TRASH_DIR_PATH } from '@/constants/config'
 import logger from '@/lib/logger'
 
@@ -49,6 +51,15 @@ const decorate = async (client, folder, page) => {
 }
 
 export const ensureFileTypeFolder = async (client, fileType, page) => {
+  // A type with no page of its own stores its files in the folder of the page
+  // shown instead: the documents, spreadsheets and presentations in Documents.
+  if (page.openedIn) {
+    return ensureFileTypeFolder(
+      client,
+      page.openedIn,
+      getFileTypePage(page.openedIn)
+    )
+  }
   const folder =
     (await findFileTypeFolder(client, fileType)) ??
     (await createFolderWithReference(

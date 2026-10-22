@@ -16,8 +16,8 @@ import { makeExcalidrawFileRoute } from '@/modules/views/Excalidraw/helpers'
 import { makeOnlyOfficeFileRoute } from '@/modules/views/OnlyOffice/helpers'
 
 /**
- * Creates a file of the page type in its folder (Doc, Spreadsheet,
- * Presentation or Board), creating that folder first when it does not exist.
+ * Creates a file of the page type in its folder (Documents or Board),
+ * creating that folder first when it does not exist.
  * The editor then goes back to the page, with its filters, not to the folder.
  * A file can start from one of the templates of the page, given by id, or
  * from a template the user saved, given as a file. Templates the user saves

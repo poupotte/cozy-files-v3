@@ -9,6 +9,10 @@ jest.mock('cozy-client/dist/models/folder', () => ({
 const { createFolderWithReference } = require('cozy-client/dist/models/folder')
 
 const reference = { _type: 'io.cozy.apps', _id: 'io.cozy.apps/drive/slide' }
+const documentsReference = {
+  _type: 'io.cozy.apps',
+  _id: 'io.cozy.apps/drive/documents'
+}
 
 const aClient = (referenced = []) => ({
   query: jest.fn().mockResolvedValue({ included: referenced }),
@@ -67,40 +71,63 @@ describe('ensureFileTypeFolder', () => {
     const client = aClient([folder])
 
     await expect(
-      ensureFileTypeFolder(client, 'slide', getFileTypePage('slide'))
+      ensureFileTypeFolder(client, 'documents', getFileTypePage('documents'))
     ).resolves.toBe(folder)
     expect(createFolderWithReference).not.toHaveBeenCalled()
   })
 
   it('creates the folder at the root, customized, when missing', async () => {
-    const client = aClient([aFolder({ path: '/.cozy_trash/Presentation' })])
+    const client = aClient([aFolder({ path: '/.cozy_trash/Documents' })])
     createFolderWithReference.mockResolvedValue(aFolder({ _id: 'new-folder' }))
 
     await expect(
-      ensureFileTypeFolder(client, 'slide', getFileTypePage('slide'))
+      ensureFileTypeFolder(client, 'documents', getFileTypePage('documents'))
     ).resolves.toMatchObject({
       _id: 'new-folder',
       metadata: {
         decorations: {
-          color: '#FF9500',
-          icon: 'PieChart',
+          color: '#2F6FED',
+          icon: 'Text',
           icon_color: '#FFFFFF'
         }
       }
     })
     expect(createFolderWithReference).toHaveBeenCalledWith(
       client,
-      '/Presentation',
-      reference
+      '/Documents',
+      documentsReference
     )
   })
+
+  it.each(['text', 'sheet', 'slide'])(
+    'stores the %s files in the Documents folder',
+    async fileType => {
+      const client = aClient([])
+      createFolderWithReference.mockResolvedValue(aFolder({ _id: 'docs' }))
+
+      await ensureFileTypeFolder(client, fileType, getFileTypePage(fileType))
+
+      expect(client.query.mock.calls[0][0].referenced).toEqual(
+        documentsReference
+      )
+      expect(createFolderWithReference).toHaveBeenCalledWith(
+        client,
+        '/Documents',
+        documentsReference
+      )
+    }
+  )
 
   it('keeps the look the user gave the folder', async () => {
     const client = aClient([
       aFolder({ metadata: { decorations: { color: '#e53935' } } })
     ])
 
-    await ensureFileTypeFolder(client, 'slide', getFileTypePage('slide'))
+    await ensureFileTypeFolder(
+      client,
+      'documents',
+      getFileTypePage('documents')
+    )
 
     expect(client.save).not.toHaveBeenCalled()
   })

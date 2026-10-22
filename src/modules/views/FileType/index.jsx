@@ -21,8 +21,6 @@ import { FileTypeDropzone } from './FileTypeDropzone'
 import { FileTypeEmpty } from './FileTypeEmpty'
 import { FileTypeHeader } from './FileTypeHeader'
 import { FileTypeListProvider } from './FileTypeList'
-import { OfficeCard } from './Office/OfficeCard'
-import { OfficeCreateStrip } from './Office/OfficeCreateStrip'
 import { saveAsTemplate } from './UserTemplates/saveAsTemplate'
 import { useTemplateStrip } from './UserTemplates/useTemplateStrip'
 import { isUserTemplate } from './UserTemplates/userTemplates'
@@ -209,13 +207,6 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
                   isCreating={isCreatingDocument}
                 />
               </>
-            ) : home === 'office' ? (
-              <OfficeCreateStrip
-                fileType={fileType}
-                onCreate={createFile}
-                isCreating={isCreating}
-                {...templateStripProps}
-              />
             ) : (
               <BoardCreateStrip
                 onCreate={createFile}
@@ -242,11 +233,6 @@ const FileTypeViewContent = ({ fileType, page, createdByMe, isHome }) => {
                   />
                 ),
                 emptyLabel: base.t(`DocumentsHome.no_file.${documentFilter}`)
-              })}
-              {...(home === 'office' && {
-                Card: OfficeCard,
-                cardProps: { fileType },
-                emptyLabel: base.t(`OfficeHome.no_file.${fileType}`)
               })}
               seeAllPath={getFileTypePath(
                 fileType,

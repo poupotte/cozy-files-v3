@@ -927,11 +927,6 @@
       "sheet": "Feuille de calcul vierge",
       "slide": "Présentation vierge"
     },
-    "no_file": {
-      "text": "Tes documents s'afficheront ici.",
-      "sheet": "Tes feuilles de calcul s'afficheront ici.",
-      "slide": "Tes présentations s'afficheront ici."
-    },
     "sheet_count": "%{smart_count} feuille |||| %{smart_count} feuilles",
     "slide_count": "%{smart_count} diapositive |||| %{smart_count} diapositives",
     "templates": {

@@ -18,6 +18,18 @@ describe('getFileTypePage', () => {
     )
   })
 
+  it.each(['text', 'sheet', 'slide'])(
+    'opens the Documents page for the %s type',
+    fileType => {
+      expect(getFileTypePage(fileType).openedIn).toBe('documents')
+    }
+  )
+
+  it('keeps the Documents and Board pages', () => {
+    expect(getFileTypePage('documents').openedIn).toBeUndefined()
+    expect(getFileTypePage('excalidraw').openedIn).toBeUndefined()
+  })
+
   it('knows no page of an unknown type', () => {
     expect(getFileTypePage('unknown')).toBeNull()
   })

@@ -24,7 +24,8 @@ import FileTypeTrashView from '../views/FileType/FileTypeTrashView'
 import {
   FILE_TYPE_SECTION_CREATED_BY_ME,
   FILE_TYPE_SECTION_RECENT_LIST,
-  getFileTypePage
+  getFileTypePage,
+  getFileTypePath
 } from '../views/FileType/helpers'
 import OnlyOfficePaywallView from '../views/OnlyOffice/OnlyOfficePaywallView'
 import { getOnlyOfficeRoutes } from '../views/OnlyOffice/routes'
@@ -104,6 +105,9 @@ const FileTypeLayout = () => {
   const page = getFileTypePage(fileType)
 
   if (!page) return <Navigate to="/recent" replace={true} />
+  if (page.openedIn) {
+    return <Navigate to={getFileTypePath(page.openedIn)} replace={true} />
+  }
 
   const layout = (
     <Layout

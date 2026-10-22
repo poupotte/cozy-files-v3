@@ -2,6 +2,7 @@
   "Nav": {
     "item_drive": "My Drive",
     "item_created_by_me": "Created by me",
+    "item_from_apps": "Download from apps",
     "item_recent": "Recents",
     "item_sharings": "Sharings",
     "item_shared": "Shared by me",
@@ -80,10 +81,7 @@
     "sharings_tabs": "Sharings tabs",
     "sharings_tab_with_me": "With me",
     "sharings_tab_by_me": "By me",
-    "sharings_tab_drives": "Team drives",
-    "root_tabs": "Files tabs",
-    "root_tab_mine": "My files",
-    "root_tab_apps": "From apps"
+    "sharings_tab_drives": "Team drives"
   },
   "filters": {
     "contact": {

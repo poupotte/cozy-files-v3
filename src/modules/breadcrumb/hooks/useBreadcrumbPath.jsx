@@ -9,6 +9,8 @@ import { fetchFolder, useFolder } from '@/modules/breadcrumb/utils/fetchFolder'
  * @typedef {Object} BreadcrumbPath
  * @property {string} name - The name of the folder.
  * @property {string} id - The ID of the folder.
+ * @property {string} [to] - Route opened instead of the folder, for a root
+ * @property {object} [icon] - Icon shown instead of the name, for a root
  */
 
 /**
@@ -18,13 +20,16 @@ import { fetchFolder, useFolder } from '@/modules/breadcrumb/utils/fetchFolder'
  * @param {string} options.currentFolderId - The ID of the current folder.
  * @param {BreadcrumbPath} options.rootBreadcrumbPath - The root breadcrumb path object.
  * @param {string[]} [options.sharedDocumentIds] - The IDs of shared documents.
+ * @param {(topFolder: object) => BreadcrumbPath|null} [options.getRootBreadcrumbPath] -
+ * Root shown instead of rootBreadcrumbPath, from the folder right under it
  * @returns {BreadcrumbPath[]} - The breadcrumb path as an array of objects.
  */
 export const useBreadcrumbPath = ({
   currentFolderId,
   rootBreadcrumbPath,
   sharedDocumentIds,
-  driveId
+  driveId,
+  getRootBreadcrumbPath
 }) => {
   const client = useClient()
   const [paths, setPaths] = useState([])
@@ -62,6 +67,7 @@ export const useBreadcrumbPath = ({
     }
 
     let isSubscribed = true
+    let topFolder = null
     const returnedPaths = [
       { name: folderAttributes.name, id: folderAttributes.id }
     ]
@@ -74,6 +80,7 @@ export const useBreadcrumbPath = ({
       const folder = await fetchFolder({ client, driveId, folderId: id })
       if (!folder) return undefined
 
+      topFolder = folder
       returnedPaths.unshift({ name: folder.name, id: folder.id })
       return hasAccessToSharedDocument(folder.id) ? folder.dir_id : undefined
     }
@@ -83,6 +90,14 @@ export const useBreadcrumbPath = ({
         rootBreadcrumbPath?.name !== 'Public' &&
         returnedPaths[0]?.id !== rootBreadcrumbPath.id
       )
+    }
+
+    const getRootPath = async () => {
+      if (!getRootBreadcrumbPath) return rootBreadcrumbPath
+      const folder =
+        topFolder ??
+        (await fetchFolder({ client, driveId, folderId: folderAttributes.id }))
+      return (folder && getRootBreadcrumbPath(folder)) ?? rootBreadcrumbPath
     }
 
     const handleBreadcrumbError = error => {
@@ -113,9 +128,9 @@ export const useBreadcrumbPath = ({
 
       if (isSubscribed) {
         if (shouldAddRootPath()) {
-          returnedPaths.unshift(rootBreadcrumbPath)
+          returnedPaths.unshift(await getRootPath())
         }
-        setPaths(returnedPaths)
+        if (isSubscribed) setPaths(returnedPaths)
       }
     }
 
@@ -128,6 +143,7 @@ export const useBreadcrumbPath = ({
     client,
     sharedDocumentIds,
     rootBreadcrumbPath,
+    getRootBreadcrumbPath,
     driveId,
     fetchStatus,
     folderAttributes.id,

@@ -2,7 +2,7 @@ import ReactRouter from 'react-router-dom'
 
 import useCurrentFolderId from './useCurrentFolderId'
 
-import { ROOT_DIR_ID, TRASH_DIR_ID } from '@/constants/config'
+import { FROM_APPS_ROUTE, ROOT_DIR_ID, TRASH_DIR_ID } from '@/constants/config'
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -27,6 +27,17 @@ describe('useCurrentFolderId', () => {
     jest
       .spyOn(ReactRouter, 'useLocation')
       .mockReturnValue({ pathname: '/folder' })
+
+    const currentFolderId = useCurrentFolderId()
+
+    expect(currentFolderId).toBe(ROOT_DIR_ID)
+  })
+
+  it('should return ROOT_DIR_ID in From apps', () => {
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({})
+    jest
+      .spyOn(ReactRouter, 'useLocation')
+      .mockReturnValue({ pathname: `/${FROM_APPS_ROUTE}/file/file-id` })
 
     const currentFolderId = useCurrentFolderId()
 

@@ -1,6 +1,10 @@
 import { computeFileType, computeApp, computePath } from './helpers'
 
-import { TRASH_DIR_ID, SHARED_DRIVES_DIR_ID } from '@/constants/config'
+import {
+  FROM_APPS_ROUTE,
+  TRASH_DIR_ID,
+  SHARED_DRIVES_DIR_ID
+} from '@/constants/config'
 import { DRIVE_ROOT_TYPE } from '@/modules/shareddrives/types'
 import { makeExcalidrawFileRoute } from '@/modules/views/Excalidraw/helpers'
 import { makeOnlyOfficeFileRoute } from '@/modules/views/OnlyOffice/helpers'
@@ -560,6 +564,22 @@ describe('computePath', () => {
     expect(
       computePath({}, { type: 'nextcloud-trash', pathname: '/some/path' })
     ).toBe('/some/path/trash')
+  })
+
+  it('opens the folders of From apps within From apps', () => {
+    const file = { _id: 'notes-dir' }
+    expect(
+      computePath(file, {
+        type: 'directory',
+        pathname: `/${FROM_APPS_ROUTE}`
+      })
+    ).toBe('notes-dir')
+    expect(
+      computePath(file, {
+        type: 'directory',
+        pathname: `/${FROM_APPS_ROUTE}/notes-parent`
+      })
+    ).toBe('../notes-dir')
   })
 
   it('should return correct path for nextcloud', () => {

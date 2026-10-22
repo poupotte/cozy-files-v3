@@ -69,7 +69,7 @@ const DesktopBreadcrumb = ({ onBreadcrumbClick, path }) => {
                 onClick={onBreadcrumbClick}
                 item={breadcrumbPath}
                 isCurrent={index === path.length - 1}
-                icon={Folder}
+                icon={breadcrumbPath.icon ?? Folder}
               />
             )
           }

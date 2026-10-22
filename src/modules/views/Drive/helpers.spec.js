@@ -1,9 +1,4 @@
-import {
-  ROOT_TAB_APPS,
-  ROOT_TAB_MINE,
-  filterRootTab,
-  isAppFolder
-} from './helpers'
+import { filterRootItems, isAppFolder } from './helpers'
 
 const appReference = id => ({
   relationships: { referenced_by: { data: [{ type: 'io.cozy.apps', id }] } }
@@ -44,22 +39,22 @@ describe('isAppFolder', () => {
   })
 })
 
-describe('filterRootTab', () => {
+describe('filterRootItems', () => {
   const results = [
     { fetchStatus: 'loaded', data: [notes, photos, projects], count: 3 },
     { fetchStatus: 'loaded', data: [video], count: 1 }
   ]
 
-  it('keeps the user folders and files in the user tab', () => {
-    const [folders, files] = filterRootTab(results, ROOT_TAB_MINE)
+  it('keeps the user folders and files in My Drive', () => {
+    const [folders, files] = filterRootItems(results, false)
 
     expect(folders.data).toEqual([projects])
     expect(folders.count).toBe(1)
     expect(files.data).toEqual([video])
   })
 
-  it('keeps the app folders only in the apps tab', () => {
-    const [folders, files] = filterRootTab(results, ROOT_TAB_APPS)
+  it('keeps the app folders only in From apps', () => {
+    const [folders, files] = filterRootItems(results, true)
 
     expect(folders.data).toEqual([notes, photos])
     expect(files.data).toEqual([])

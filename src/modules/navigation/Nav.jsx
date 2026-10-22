@@ -2,6 +2,7 @@ import {
   Icon,
   ClockOutline,
   Cloud2,
+  Download,
   FromUser,
   Star,
   Trash
@@ -15,7 +16,7 @@ import useBreakpoints from 'cozy-ui/transpiled/react/providers/Breakpoints'
 import { useI18n } from 'twake-i18n'
 
 import NextcloudIcon from '@/assets/icons/icon-nextcloud.svg'
-import { CREATED_BY_ME_ROUTE } from '@/constants/config'
+import { CREATED_BY_ME_ROUTE, FROM_APPS_ROUTE } from '@/constants/config'
 import { ExternalNavItem } from '@/modules/navigation/ExternalNavItem'
 import { FavoriteList } from '@/modules/navigation/FavoriteList'
 import { useNavContext } from '@/modules/navigation/NavContext'
@@ -36,6 +37,13 @@ export const Nav = () => {
         icon={<Icon icon={Cloud2} />}
         label="drive"
         rx={/\/(folder|nextcloud)(\/.*)?/}
+        clickState={clickState}
+      />
+      <NavItem
+        to={`/${FROM_APPS_ROUTE}`}
+        icon={<Icon icon={Download} />}
+        label="from_apps"
+        rx={new RegExp(`^/${FROM_APPS_ROUTE}(/.*)?$`)}
         clickState={clickState}
       />
       {!isDesktop ? (

@@ -452,4 +452,73 @@ describe('useBreadcrumbPath', () => {
       folderId: parentFolderId
     })
   })
+
+  describe('with getRootBreadcrumbPath', () => {
+    const appsRoot = { id: rootBreadcrumbPath.id, name: 'Apps', to: '/apps' }
+    const getRootBreadcrumbPath = folder =>
+      folder.name === 'app' ? appsRoot : null
+
+    const renderPath = async () => {
+      let render
+      await act(async () => {
+        render = await renderHook(() =>
+          useBreadcrumbPath({
+            rootBreadcrumbPath,
+            getRootBreadcrumbPath,
+            currentFolderId: 'current'
+          })
+        )
+      })
+      return render.result.current
+    }
+
+    it('starts with the root it gives for the folder under the root', async () => {
+      useFolder.mockReturnValue({
+        folder: createFolder({ id: 'current', name: 'current', dirId: 'top' }),
+        fetchStatus: 'loaded'
+      })
+      fetchFolder.mockReturnValueOnce({
+        id: 'top',
+        name: 'app',
+        dir_id: rootBreadcrumbPath.id
+      })
+
+      expect(await renderPath()).toEqual([
+        appsRoot,
+        { id: 'top', name: 'app' },
+        { id: 'current', name: 'current' }
+      ])
+    })
+
+    it('asks for the current folder when it is right under the root', async () => {
+      useFolder.mockReturnValue({
+        folder: createFolder({
+          id: 'current',
+          name: 'app',
+          dirId: rootBreadcrumbPath.id
+        }),
+        fetchStatus: 'loaded'
+      })
+      fetchFolder.mockReturnValueOnce({ id: 'current', name: 'app' })
+
+      expect(await renderPath()).toEqual([
+        appsRoot,
+        { id: 'current', name: 'app' }
+      ])
+    })
+
+    it('keeps the usual root when it gives none', async () => {
+      useFolder.mockReturnValue({
+        folder: createFolder({ id: 'current', name: 'mine', dirId: 'top' }),
+        fetchStatus: 'loaded'
+      })
+      fetchFolder.mockReturnValueOnce({
+        id: 'top',
+        name: 'projects',
+        dir_id: rootBreadcrumbPath.id
+      })
+
+      expect((await renderPath())[0]).toEqual(rootBreadcrumbPath)
+    })
+  })
 })

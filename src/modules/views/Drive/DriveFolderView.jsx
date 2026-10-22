@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react'
-import { Outlet, useParams, useSearchParams } from 'react-router-dom'
+import { Download } from '@linagora/twake-icons'
+import React, { useCallback, useMemo } from 'react'
+import { Outlet, useLocation, useParams } from 'react-router-dom'
 
 import flag from 'cozy-flags'
 import {
@@ -9,14 +10,11 @@ import {
 } from 'cozy-sharing'
 import { makeActions } from 'cozy-ui/transpiled/react/ActionsMenu/Actions'
 
-import RootTabs from './RootTabs'
-import { ROOT_TAB_APPS, ROOT_TAB_MINE, filterRootTab } from './helpers'
+import { filterRootItems, isAppFolder } from './helpers'
 import { useDriveQueries } from './useDriveQueries'
 
-import styles from '@/styles/topbar.styl'
-
 import useHead from '@/components/useHead'
-import { ROOT_DIR_ID } from '@/constants/config'
+import { FROM_APPS_ROUTE, ROOT_DIR_ID } from '@/constants/config'
 import { useClipboardContext } from '@/contexts/ClipboardProvider'
 import { useCurrentFolderId, useDisplayedFolder, useFolderSort } from '@/hooks'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
@@ -57,12 +55,18 @@ import { filterOutReceivedShares } from '@/modules/views/Folder/syncHelpers'
 import FolderViewBodyVz from '@/modules/views/Folder/virtualized/FolderViewBody'
 import { useResumeUploadFromFlagship } from '@/modules/views/Upload/useResumeFromFlagship'
 
-const DriveFolderView = () => {
+/**
+ * @param {object} props - Component props
+ * @param {bool} [props.fromApps] - Lists the folders the apps made at the root,
+ * which My Drive leaves out
+ * @returns {JSX.Element} The rendered component
+ */
+const DriveFolderView = ({ fromApps = false }) => {
   const base = useFolderViewBase()
   const { t } = base
   const params = useParams()
   const currentFolderId = useCurrentFolderId()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { pathname, search } = useLocation()
   useHead()
   const { isBigThumbnail, toggleThumbnailSize } = useThumbnailSizeContext()
   const sharingContext = useSharingContext()
@@ -89,19 +93,15 @@ const DriveFolderView = () => {
   // Sharings section, not My Drive. Wait until the sharing context is fully
   // loaded so isOwner can tell a received share from the user's own folders;
   // filtering earlier sees an incomplete picture and would show-then-hide them.
-  // The root is split in two tabs, so that the folders created by apps do not
-  // crowd the user's own files.
+  // The folders created by apps have their own section, From apps, so that
+  // they do not crowd the user's own files at the root of My Drive.
   const isRoot = currentFolderId === ROOT_DIR_ID
-  const rootTab =
-    searchParams.get('tab') === ROOT_TAB_APPS ? ROOT_TAB_APPS : ROOT_TAB_MINE
-  const handleRootTabChange = tab =>
-    setSearchParams(tab === ROOT_TAB_APPS ? { tab } : {})
   const allResults = useMemo(() => {
     const results = allLoaded
       ? filterOutReceivedShares(rawResults, isOwner)
       : rawResults
-    return isRoot ? filterRootTab(results, rootTab) : results
-  }, [allLoaded, rawResults, isOwner, isRoot, rootTab])
+    return isRoot ? filterRootItems(results, fromApps) : results
+  }, [allLoaded, rawResults, isOwner, isRoot, fromApps])
   const [foldersResult, filesResult] = allResults
   const canWriteToCurrentFolder = hasWriteAccess(currentFolderId)
 
@@ -158,9 +158,33 @@ const DriveFolderView = () => {
   const rootBreadcrumbPath = useMemo(
     () => ({
       id: ROOT_DIR_ID,
-      name: t('breadcrumb.title_drive')
+      name: fromApps ? t('Nav.item_from_apps') : t('breadcrumb.title_drive')
     }),
-    [t]
+    [t, fromApps]
+  )
+  // The folders of an app folder belong to From apps, where it is listed: they
+  // lead back there, and one opened from elsewhere moves there.
+  const { navigate } = base
+  const getRootBreadcrumbPath = useCallback(
+    topFolder => {
+      if (!isAppFolder(topFolder)) return null
+      if (!fromApps) {
+        navigate(
+          {
+            pathname: pathname.replace(/^\/folder\//, `/${FROM_APPS_ROUTE}/`),
+            search
+          },
+          { replace: true }
+        )
+      }
+      return {
+        id: ROOT_DIR_ID,
+        name: t('Nav.item_from_apps'),
+        icon: Download,
+        to: `/${FROM_APPS_ROUTE}`
+      }
+    },
+    [t, fromApps, navigate, pathname, search]
   )
 
   useResumeUploadFromFlagship()
@@ -183,31 +207,12 @@ const DriveFolderView = () => {
             displayedFolder={displayedFolder}
           >
             <FolderViewHeader>
-              {isRoot ? (
-                <>
-                  {/* Keeps the title at its content width so the tabs sit
-                      right next to it, as on the Sharings page. */}
-                  <div className={styles['fil-sharings-title']}>
-                    <FolderViewBreadcrumb
-                      rootBreadcrumbPath={rootBreadcrumbPath}
-                      currentFolderId={currentFolderId}
-                    />
-                  </div>
-                  {!base.isMobile && (
-                    <RootTabs
-                      tab={rootTab}
-                      onChange={handleRootTabChange}
-                      className="u-ml-2"
-                    />
-                  )}
-                </>
-              ) : (
-                currentFolderId && (
-                  <FolderViewBreadcrumb
-                    rootBreadcrumbPath={rootBreadcrumbPath}
-                    currentFolderId={currentFolderId}
-                  />
-                )
+              {currentFolderId && (
+                <FolderViewBreadcrumb
+                  rootBreadcrumbPath={rootBreadcrumbPath}
+                  getRootBreadcrumbPath={getRootBreadcrumbPath}
+                  currentFolderId={currentFolderId}
+                />
               )}
               <Toolbar
                 canUpload={true}
@@ -217,9 +222,6 @@ const DriveFolderView = () => {
                 toggleThumbnailSize={toggleThumbnailSize}
               />
             </FolderViewHeader>
-            {isRoot && base.isMobile && (
-              <RootTabs tab={rootTab} onChange={handleRootTabChange} />
-            )}
             {flag('drive.virtualization.enabled') && !base.isMobile ? (
               <FolderViewBodyVz
                 actions={actions}

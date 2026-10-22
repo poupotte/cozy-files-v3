@@ -9,6 +9,7 @@ import { useBreadcrumbPath } from '@/modules/breadcrumb/hooks/useBreadcrumbPath.
 const FolderViewBreadcrumb = ({
   currentFolderId,
   rootBreadcrumbPath,
+  getRootBreadcrumbPath,
   sharedDocumentIds
 }) => {
   const navigate = useNavigate()
@@ -16,11 +17,16 @@ const FolderViewBreadcrumb = ({
   const path = useBreadcrumbPath({
     currentFolderId,
     rootBreadcrumbPath,
+    getRootBreadcrumbPath,
     sharedDocumentIds
   })
 
   const onBreadcrumbClick = useCallback(
-    ({ id }) => {
+    ({ id, to }) => {
+      if (to) {
+        navigate(to)
+        return
+      }
       const isInSharings = pathname.startsWith('/sharings/')
       navigate(
         {
@@ -50,6 +56,7 @@ FolderViewBreadcrumb.propTypes = {
     id: PropTypes.string,
     name: PropTypes.string
   }).isRequired,
+  getRootBreadcrumbPath: PropTypes.func,
   sharedDocumentIds: PropTypes.array
 }
 

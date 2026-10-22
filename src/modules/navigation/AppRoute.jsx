@@ -42,6 +42,7 @@ import TrashFolderView from '../views/Trash/TrashFolderView'
 import FileHistory from '@/components/FileHistory'
 import {
   CREATED_BY_ME_ROUTE,
+  FROM_APPS_ROUTE,
   ROOT_DIR_ID,
   SHARING_TAB_BY_ME,
   SHARING_TAB_DRIVES,
@@ -282,6 +283,28 @@ const sharedDriveRoutes = () => (
   </>
 )
 
+const driveFolderChildRoutes = () => (
+  <>
+    <Route
+      path="file/:fileId"
+      element={<OutletWrapper Component={FilesViewerDrive} />}
+    >
+      <Route path="v/revision" element={<FileHistory />} />
+      <Route path="v/share" element={<ShareFileView />} />
+      <Route path="v/move" element={<MoveFilesView isOpenInViewer />} />
+      <Route path="v/duplicate" element={<FolderDuplicateView />} />
+      <Route path="v/ai/paywall" element={<AIAssistantPaywallView />} />
+    </Route>
+    <Route path="file/:fileId/revision" element={<FileHistory />} />
+    <Route path="file/:fileId/share" element={<ShareFileView />} />
+    <Route path="file/:fileId/qualify" element={<QualifyFileView />} />
+    <Route path="paywall" element={<OnlyOfficePaywallView />} />
+    <Route path="share" element={<ShareDisplayedFolderView />} />
+    <Route path="move" element={<MoveFilesView />} />
+    <Route path="duplicate" element={<FolderDuplicateView />} />
+  </>
+)
+
 const getEditorRoutes = () => (
   <>
     {flag('drive.excalidraw.enabled') && getExcalidrawRoutes()}
@@ -347,23 +370,16 @@ const AppRoutes = ({ sharedDrivesEnabled }) => (
         element={<Navigate to={ROOT_DIR_ID} replace={true} />}
       />
       <Route path="folder/:folderId" element={<DriveFolderView />}>
-        <Route
-          path="file/:fileId"
-          element={<OutletWrapper Component={FilesViewerDrive} />}
-        >
-          <Route path="v/revision" element={<FileHistory />} />
-          <Route path="v/share" element={<ShareFileView />} />
-          <Route path="v/move" element={<MoveFilesView isOpenInViewer />} />
-          <Route path="v/duplicate" element={<FolderDuplicateView />} />
-          <Route path="v/ai/paywall" element={<AIAssistantPaywallView />} />
-        </Route>
-        <Route path="file/:fileId/revision" element={<FileHistory />} />
-        <Route path="file/:fileId/share" element={<ShareFileView />} />
-        <Route path="file/:fileId/qualify" element={<QualifyFileView />} />
-        <Route path="paywall" element={<OnlyOfficePaywallView />} />
-        <Route path="share" element={<ShareDisplayedFolderView />} />
-        <Route path="move" element={<MoveFilesView />} />
-        <Route path="duplicate" element={<FolderDuplicateView />} />
+        {driveFolderChildRoutes()}
+      </Route>
+      <Route path={FROM_APPS_ROUTE} element={<DriveFolderView fromApps />}>
+        {driveFolderChildRoutes()}
+      </Route>
+      <Route
+        path={`${FROM_APPS_ROUTE}/:folderId`}
+        element={<DriveFolderView fromApps />}
+      >
+        {driveFolderChildRoutes()}
       </Route>
 
       {!flag('drive.hide-nextcloud-dev') ? (

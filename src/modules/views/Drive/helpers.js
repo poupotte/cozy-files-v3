@@ -2,9 +2,6 @@ import get from 'lodash/get'
 
 import { SETTINGS_DIR_PATH } from '@/constants/config'
 
-export const ROOT_TAB_MINE = 'mine'
-export const ROOT_TAB_APPS = 'apps'
-
 // Folders the stack creates at the root without an app reference.
 const APP_DIR_PATHS = ['/Photos', SETTINGS_DIR_PATH]
 
@@ -24,17 +21,15 @@ export const isAppFolder = file => {
 }
 
 /**
- * Keeps the root items of a tab: the app folders in the apps tab, everything
- * else in the user's tab.
+ * Keeps the root items of a section: the app folders in From apps, everything
+ * else in My Drive.
  * @param {array} queryResults - cozy-client query results (folders, files)
- * @param {string} tab - ROOT_TAB_MINE or ROOT_TAB_APPS
- * @returns {array} query results with the items of the tab only
+ * @param {bool} fromApps - Whether the section is From apps
+ * @returns {array} query results with the items of the section only
  */
-export const filterRootTab = (queryResults, tab) =>
+export const filterRootItems = (queryResults, fromApps) =>
   queryResults.map(result => {
     if (!result?.data) return result
-    const data = result.data.filter(
-      file => isAppFolder(file) === (tab === ROOT_TAB_APPS)
-    )
+    const data = result.data.filter(file => isAppFolder(file) === fromApps)
     return { ...result, data, count: data.length }
   })

@@ -2,6 +2,7 @@
   "Nav": {
     "item_drive": "Mon Drive",
     "item_created_by_me": "Créés par moi",
+    "item_from_apps": "Téléchargés depuis les applis",
     "item_recent": "Récents",
     "item_sharings": "Partages",
     "item_shared": "Partagés",
@@ -80,10 +81,7 @@
     "sharings_tabs": "Onglets des partages",
     "sharings_tab_with_me": "Avec moi",
     "sharings_tab_by_me": "Par moi",
-    "sharings_tab_drives": "Drives d'équipe",
-    "root_tabs": "Onglets des fichiers",
-    "root_tab_mine": "Mes fichiers",
-    "root_tab_apps": "Applis"
+    "sharings_tab_drives": "Drives d'équipe"
   },
   "filters": {
     "contact": {

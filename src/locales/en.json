@@ -1179,7 +1179,7 @@
       "sheet": "Spreadsheet",
       "slide": "Presentation"
     },
-    "import": "Import files",
+    "import": "Upload files",
     "filters": "Document type",
     "filter": {
       "all": "All",
